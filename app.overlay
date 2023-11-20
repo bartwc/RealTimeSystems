@@ -1,0 +1,54 @@
+/ {
+    leds {
+		compatible = "gpio-leds";
+		t0: led_0 {
+			gpios = <&gpioa 0 GPIO_ACTIVE_HIGH>;
+		};
+        t1: led_1 {
+			gpios = <&gpioa 1 GPIO_ACTIVE_HIGH>;
+		};
+        t2: led_2 {
+			gpios = <&gpioa 2 GPIO_ACTIVE_HIGH>;
+		};
+		t3: led_3 {
+			gpios = <&gpioa 3 GPIO_ACTIVE_HIGH>;
+		};
+		t4: led_4 {
+			gpios = <&gpioa 4 GPIO_ACTIVE_HIGH>;
+		};
+		t5: led_5 {
+			gpios = <&gpioa 5 GPIO_ACTIVE_HIGH>;
+		};
+		t6: led_6 {
+			gpios = <&gpioa 6 GPIO_ACTIVE_HIGH>;
+		};
+		t7: led_7 {
+			gpios = <&gpioa 7 GPIO_ACTIVE_HIGH>;
+		};
+		b0: led_8 {
+            gpios = <&gpiob 0 GPIO_ACTIVE_HIGH>;
+        };
+		debug_led: led_9 {
+            gpios = <&gpiod 12 GPIO_ACTIVE_HIGH>;
+        };
+	};
+
+    aliases {
+        a0 = &t0;
+        a1 = &t1;
+        a2 = &t2;
+		a3 = &t3;
+		a4 = &t4;
+		a5 = &t5;
+		a6 = &t6;
+		a7 = &t7;
+		b0 = &b0;
+		debug-led = &debug_led;
+    };
+};
+
+&zephyr_udc0 {
+	cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+	};
+};

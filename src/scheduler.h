@@ -1,0 +1,1 @@
+k_timeout_t schedule(Task *t, int n, bool finished);

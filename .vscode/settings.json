@@ -1,0 +1,20 @@
+{
+    "files.associations": {
+        "kernel.h": "c",
+        "zephyr.h": "c",
+        "audio.h": "c",
+        "errno.h": "c",
+        "math.h": "c",
+        "stdint.h": "c",
+        "debug_led.h": "c",
+        "usb.h": "c",
+        "cstdlib": "c",
+        "task_main.h": "c",
+        "random": "c",
+        "compare": "cpp",
+        "cstdint": "cpp",
+        "gpio.h": "c",
+        "thread.h": "c",
+        "scheduler_impl.h": "c"
+    }
+}
