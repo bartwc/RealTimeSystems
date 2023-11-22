@@ -15,8 +15,6 @@ earliest-deadline-first (EDF) scheduler. The resulting schedules must then be pl
 The assignment is submitted by pushing to the `main` branch of this repository. 
 The last commit before the deadline will be considered your submission. 
 We recommend frequently committing in order to prevent losing progression.
-The report part of this assignment should be submitted as a `.pdf`. (LaTeX or Markdown). The filename should be formatted as:
-`assignment_a_report_group_X.pdf` where `X` is your group number. Inside the report you should specify your names and student numbers.
-Please put any figures you use in the `resources` directory.
+The report part of this assignment should be submitted as a `.pdf` (LaTeX or Markdown). Use a maximum of **6 pages** for your report (A4, standard font size, including images). The filename should be formatted as: `assignment_a_report_group_X.pdf` where `X` is your group number. Inside the report you should specify your names and student numbers.
 
 > Following your assignment's submission, the TAs might conduct oral checks about the assignment. For example, you might be asked to change parts of the code or explain the report. There will be a follow up announcement with more information.
