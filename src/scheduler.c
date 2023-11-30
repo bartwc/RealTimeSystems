@@ -22,10 +22,11 @@ static int start_time = -1;
 /// Read the description of the `schedule` function below to read about the properties of this function.
 k_timeout_t rate_monotonic(Task *tasks, int n, bool finished) {
     int i;
+    int current_time = k_uptime_get();
     // You can initialize the new fields of your tasks here. This only runs the first time.
     if (start_time == -1)
     {
-        start_time = k_uptime_get();
+        start_time = current_time;
         i = 0;
         while (i <= n-1)
         {
@@ -37,20 +38,27 @@ k_timeout_t rate_monotonic(Task *tasks, int n, bool finished) {
     else if (finished == true)
     {
         tasks[current_task].is_finished = true;
-        tasks[current_task].next_arrival_time = tasks[current_task].next_arrival_time + tasks[current_task].period;
+        //tasks[current_task].next_arrival_time = tasks[current_task].next_arrival_time + tasks[current_task].period;
     }
-    else
-    {
 
+    i = 0;
+    while(i <= n-1)
+    {
+        if (tasks[i].next_arrival_time <= current_time)
+        {
+            tasks[i].next_arrival_time = tasks[i].next_arrival_time + tasks[i].period;
+            tasks[i].is_finished = false;
+        }
+        i = i + 1;
     }
 
     // select the task with the least period
-    int least_period = tasks[0].period;
+    int least_period = 2147483647;
     int temp_task = -1;
     i = 0;
     while (i <= n-1)
     {
-        if(tasks[i].period < temp_period && tasks[i].is_finished == false)
+        if(tasks[i].period <= least_period && tasks[i].is_finished == false)
         {
             least_period = tasks[i].period;
             temp_task = i;
@@ -59,23 +67,18 @@ k_timeout_t rate_monotonic(Task *tasks, int n, bool finished) {
     }
 
     i = 0;
-    int scheduler_next_awake = tasks[0].next_arrival_time;
+    int scheduler_next_awake = 2147483647;
 //    int temp_next_awake;
     int temp_next_arriving_task = 0;
     while (i <= n-1)
     {
-        if(tasks[i].next_arrival_time < scheduler_next_awake && tasks[i].period < tasks[current_task].period)
+        if(tasks[i].next_arrival_time < scheduler_next_awake && (tasks[current_task].is_finished == true || tasks[i].period < tasks[current_task].period))
         {
             temp_next_arriving_task = i;
             scheduler_next_awake = tasks[i].next_arrival_time;
         }
         i = i + 1;
     }
-
-
-    tasks[temp_next_arriving_task].is_finished = false;
-    tasks[temp_next_arriving_task].next_arrival_time = tasks[temp_next_arriving_task].next_arrival_time + tasks[temp_next_arriving_task].period;
-
 
     if(temp_task != -1)
     {
@@ -87,7 +90,7 @@ k_timeout_t rate_monotonic(Task *tasks, int n, bool finished) {
         set_idle();
     }
 
-
+    return K_MSEC(scheduler_next_awake - current_time);
 }
 
 /// In this function you should write an earliest deadline first scheduler.
@@ -116,5 +119,5 @@ k_timeout_t earliest_deadline_first(Task *tasks, int n, bool finished) {
 ///         https://docs.zephyrproject.org/latest/kernel/services/timing/clocks.html. Some of the functions/macros that you might find useful are
 ///         `K_MSEC`, `K_USEC`, `sys_timepoint_calc` and `sys_timepoint_timeout`.
 k_timeout_t schedule(Task *tasks, int n, bool finished) {
-    return example(tasks, n, finished);
+    return rate_monotonic(tasks, n, finished);
 }
