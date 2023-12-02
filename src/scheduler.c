@@ -24,27 +24,21 @@ k_timeout_t rate_monotonic(Task *tasks, int n, bool finished) {
     int i;
     int current_time = k_uptime_get();
     // You can initialize the new fields of your tasks here. This only runs the first time.
-    if (start_time == -1)
-    {
+    if (start_time == -1) {
         start_time = current_time;
         i = 0;
-        while (i <= n-1)
-        {
+        while (i <= n - 1) {
             tasks[i].next_arrival_time = start_time + tasks[i].period;
             tasks[i].is_finished = false;
             i = i + 1;
         }
-    }
-    else if (finished == true)
-    {
+    } else if (finished == true) {
         tasks[current_task].is_finished = true;
     }
 
     i = 0;
-    while(i <= n-1)
-    {
-        if (tasks[i].next_arrival_time <= current_time)
-        {
+    while (i <= n - 1) {
+        if (tasks[i].next_arrival_time <= current_time) {
             tasks[i].next_arrival_time = tasks[i].next_arrival_time + tasks[i].period;
             tasks[i].is_finished = false;
         }
@@ -55,10 +49,8 @@ k_timeout_t rate_monotonic(Task *tasks, int n, bool finished) {
     int least_period = INT32_MAX;
     int temp_task = -1;
     i = 0;
-    while (i <= n-1)
-    {
-        if(tasks[i].period <= least_period && tasks[i].is_finished == false)
-        {
+    while (i <= n - 1) {
+        if (tasks[i].period <= least_period && tasks[i].is_finished == false) {
             least_period = tasks[i].period;
             temp_task = i;
         }
@@ -67,27 +59,23 @@ k_timeout_t rate_monotonic(Task *tasks, int n, bool finished) {
 
     i = 0;
     int scheduler_next_awake = INT32_MAX;
-    while(i <= n-1){
-        if (temp_task == -1){
-            if (tasks[i].next_arrival_time < scheduler_next_awake){
+    while (i <= n - 1) {
+        if (temp_task == -1) {
+            if (tasks[i].next_arrival_time < scheduler_next_awake) {
                 scheduler_next_awake = tasks[i].next_arrival_time;
             }
-        }
-        else{
-            if(tasks[i].next_arrival_time < scheduler_next_awake && tasks[i].period < tasks[temp_task].period){
+        } else {
+            if (tasks[i].next_arrival_time < scheduler_next_awake && tasks[i].period < tasks[temp_task].period) {
                 scheduler_next_awake = tasks[i].next_arrival_time;
             }
         }
         i = i + 1;
     }
 
-    if(temp_task != -1)
-    {
+    if (temp_task != -1) {
         current_task = temp_task;
         set_active_task(&tasks[current_task]);
-    }
-    else
-    {
+    } else {
         set_idle();
     }
 
@@ -100,27 +88,21 @@ k_timeout_t earliest_deadline_first(Task *tasks, int n, bool finished) {
     int i;
     int current_time = k_uptime_get();
     // You can initialize the new fields of your tasks here. This only runs the first time.
-    if (start_time == -1)
-    {
+    if (start_time == -1) {
         start_time = current_time;
         i = 0;
-        while (i <= n-1)
-        {
+        while (i <= n - 1) {
             tasks[i].next_arrival_time = start_time + tasks[i].period;
             tasks[i].is_finished = false;
             i = i + 1;
         }
-    }
-    else if (finished == true)
-    {
+    } else if (finished == true) {
         tasks[current_task].is_finished = true;
     }
 
     i = 0;
-    while(i <= n-1)
-    {
-        if (tasks[i].next_arrival_time <= current_time)
-        {
+    while (i <= n - 1) {
+        if (tasks[i].next_arrival_time <= current_time) {
             tasks[i].next_arrival_time = tasks[i].next_arrival_time + tasks[i].period;
             tasks[i].is_finished = false;
         }
@@ -131,10 +113,8 @@ k_timeout_t earliest_deadline_first(Task *tasks, int n, bool finished) {
     int earliest_deadline = INT32_MAX;
     int temp_task = -1;
     i = 0;
-    while (i <= n-1)
-    {
-        if(tasks[i].next_arrival_time <= earliest_deadline && tasks[i].is_finished == false)
-        {
+    while (i <= n - 1) {
+        if (tasks[i].next_arrival_time <= earliest_deadline && tasks[i].is_finished == false) {
             earliest_deadline = tasks[i].next_arrival_time;
             temp_task = i;
         }
@@ -143,27 +123,24 @@ k_timeout_t earliest_deadline_first(Task *tasks, int n, bool finished) {
 
     i = 0;
     int scheduler_next_awake = INT32_MAX;
-    while(i <= n-1){
-        if (temp_task == -1){
-            if (tasks[i].next_arrival_time < scheduler_next_awake){
+    while (i <= n - 1) {
+        if (temp_task == -1) {
+            if (tasks[i].next_arrival_time < scheduler_next_awake) {
                 scheduler_next_awake = tasks[i].next_arrival_time;
             }
-        }
-        else{
-            if(tasks[i].next_arrival_time < scheduler_next_awake && tasks[i].next_arrival_time + tasks[i].period < tasks[temp_task].next_arrival_time){
+        } else {
+            if (tasks[i].next_arrival_time < scheduler_next_awake &&
+                tasks[i].next_arrival_time + tasks[i].period < tasks[temp_task].next_arrival_time) {
                 scheduler_next_awake = tasks[i].next_arrival_time;
             }
         }
         i = i + 1;
     }
 
-    if(temp_task != -1)
-    {
+    if (temp_task != -1) {
         current_task = temp_task;
         set_active_task(&tasks[current_task]);
-    }
-    else
-    {
+    } else {
         set_idle();
     }
 
