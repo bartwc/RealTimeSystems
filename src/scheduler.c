@@ -38,7 +38,6 @@ k_timeout_t rate_monotonic(Task *tasks, int n, bool finished) {
     else if (finished == true)
     {
         tasks[current_task].is_finished = true;
-        //tasks[current_task].next_arrival_time = tasks[current_task].next_arrival_time + tasks[current_task].period;
     }
 
     i = 0;
@@ -53,7 +52,7 @@ k_timeout_t rate_monotonic(Task *tasks, int n, bool finished) {
     }
 
     // select the task with the least period
-    int least_period = 2147483647;
+    int least_period = INT32_MAX;
     int temp_task = -1;
     i = 0;
     while (i <= n-1)
@@ -67,15 +66,17 @@ k_timeout_t rate_monotonic(Task *tasks, int n, bool finished) {
     }
 
     i = 0;
-    int scheduler_next_awake = 2147483647;
-//    int temp_next_awake;
-    int temp_next_arriving_task = 0;
-    while (i <= n-1)
-    {
-        if(tasks[i].next_arrival_time < scheduler_next_awake && (tasks[current_task].is_finished == true || tasks[i].period < tasks[current_task].period))
-        {
-            temp_next_arriving_task = i;
-            scheduler_next_awake = tasks[i].next_arrival_time;
+    int scheduler_next_awake = INT32_MAX;
+    while(i <= n-1){
+        if (temp_task == -1){
+            if (tasks[i].next_arrival_time < scheduler_next_awake){
+                scheduler_next_awake = tasks[i].next_arrival_time;
+            }
+        }
+        else{
+            if(tasks[i].next_arrival_time < scheduler_next_awake && tasks[i].period < tasks[temp_task].period){
+                scheduler_next_awake = tasks[i].next_arrival_time;
+            }
         }
         i = i + 1;
     }
