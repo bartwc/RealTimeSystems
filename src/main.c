@@ -16,9 +16,9 @@ int main() {
 
     // The provided task set:
     Task tasks[] = {
-            spawn_task(2, 20, &a0),
+            spawn_task(4, 20, &a0),
             spawn_task(10, 40, &a1),
-            spawn_task(30, 60, &a2),
+            spawn_task(33, 60, &a2),
     };
     run_scheduler(tasks, sizeof(tasks) / sizeof(tasks[0]));
 

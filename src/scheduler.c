@@ -110,7 +110,7 @@ k_timeout_t earliest_deadline_first(Task *tasks, int n, bool finished) {
     }
 
     // select the task with the least period
-    int earliest_deadline = INT32_MAX;
+    int earliest_deadline = INT_MAX;
     int temp_task = -1;
     i = 0;
     while (i <= n - 1) {
@@ -122,7 +122,7 @@ k_timeout_t earliest_deadline_first(Task *tasks, int n, bool finished) {
     }
 
     i = 0;
-    int scheduler_next_awake = INT32_MAX;
+    int scheduler_next_awake = INT_MAX;
     while (i <= n - 1) {
         if (temp_task == -1) {
             if (tasks[i].next_arrival_time < scheduler_next_awake) {
