@@ -32,13 +32,13 @@ k_timeout_t rate_monotonic(Task *tasks, int n, bool finished) {
             tasks[i].is_finished = false;
             i = i + 1;
         }
-    } else if (finished == true) {
+    } else if (finished == true && tasks[current_task].next_arrival_time > current_time) {
         tasks[current_task].is_finished = true;
     }
 
     i = 0;
     while (i <= n - 1) {
-        if (tasks[i].next_arrival_time <= current_time) {
+        if (tasks[i].next_arrival_time <= current_time && tasks[i].is_finished == true) {
             tasks[i].next_arrival_time = tasks[i].next_arrival_time + tasks[i].period;
             tasks[i].is_finished = false;
         }
@@ -96,13 +96,13 @@ k_timeout_t earliest_deadline_first(Task *tasks, int n, bool finished) {
             tasks[i].is_finished = false;
             i = i + 1;
         }
-    } else if (finished == true) {
+    } else if (finished == true && tasks[current_task].next_arrival_time > current_time) {
         tasks[current_task].is_finished = true;
     }
 
     i = 0;
     while (i <= n - 1) {
-        if (tasks[i].next_arrival_time <= current_time) {
+        if (tasks[i].next_arrival_time <= current_time && tasks[i].is_finished == true) {
             tasks[i].next_arrival_time = tasks[i].next_arrival_time + tasks[i].period;
             tasks[i].is_finished = false;
         }
@@ -162,5 +162,5 @@ k_timeout_t earliest_deadline_first(Task *tasks, int n, bool finished) {
 ///         https://docs.zephyrproject.org/latest/kernel/services/timing/clocks.html. Some of the functions/macros that you might find useful are
 ///         `K_MSEC`, `K_USEC`, `sys_timepoint_calc` and `sys_timepoint_timeout`.
 k_timeout_t schedule(Task *tasks, int n, bool finished) {
-    return earliest_deadline_first(tasks, n, finished);
+    return rate_monotonic(tasks, n, finished);
 }
