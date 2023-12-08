@@ -12,8 +12,12 @@ typedef struct {
     int execution_time;
     /// The scheduler should aim to execute this task every `period` ms.
     int period;
-    /// Feel free to add your own fields that are used for scheduling below.
-    // ..
+
+    /// Self defined fields
+    /// The timestamp of the next arrival time of this task
+    int next_arrival_time;
+    /// if the task is finished
+    bool is_finished;
 } Task;
 
 Task spawn_task(int execution_time, int period, const struct gpio_dt_spec *pin);
