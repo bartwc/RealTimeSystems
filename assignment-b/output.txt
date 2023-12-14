@@ -1,0 +1,266 @@
+[00:00:00.000,000] \x1B[0m<inf> i2s_ll_stm32: i2s@40003c00 inited\x1B[0m
+*** Booting Zephyr OS build zephyr-v3.4.0-2252-gd11c0a1664f6 ***
+[00:00:00.007,000] \x1B[0m<inf> usb_cdc_acm: Device suspended\x1B[0m
+[00:00:00.735,000] \x1B[0m<inf> usb_cdc_acm: Device configured\x1B[0m
+Ring buffer empty, disable TX IRQ[00:00:04.812,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:04.812,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:04.812,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:04.812,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:04.912,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:05.012,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:05.112,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:05.212,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:05.313,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:05.413,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:05.513,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:05.613,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:05.713,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:05.814,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:05.814,000] \x1B[1;31m<err> adc_stm32: Invalid resolution\x1B[0m
+Ring buffer empty, disable TX IRQ[00:00:05.914,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:06.014,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:06.114,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:06.214,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:06.315,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:06.415,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:06.515,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:06.615,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:06.715,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:06.816,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:06.816,000] \x1B[1;31m<err> adc_stm32: Invalid resolution\x1B[0m
+Ring buffer empty, disable TX IRQ[00:00:06.916,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:07.016,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:07.116,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:07.216,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:07.317,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:07.417,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:07.517,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:07.617,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:07.717,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:07.818,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:07.818,000] \x1B[1;31m<err> adc_stm32: Invalid resolution\x1B[0m
+Ring buffer empty, disable TX IRQ[00:00:07.918,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:08.018,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:08.118,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:08.218,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:08.319,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:08.419,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:08.519,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:08.619,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:08.719,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:08.820,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:08.820,000] \x1B[1;31m<err> adc_stm32: Invalid resolution\x1B[0m
+Ring buffer empty, disable TX IRQ[00:00:08.920,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:09.020,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:09.120,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:09.221,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:09.321,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:09.421,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:09.521,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:09.621,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:09.722,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:09.822,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:09.822,000] \x1B[1;31m<err> adc_stm32: Invalid resolution\x1B[0m
+Ring buffer empty, disable TX IRQ[00:00:09.922,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:10.022,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:10.122,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:10.223,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:10.323,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:10.423,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:10.523,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:10.623,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:10.724,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:10.824,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:10.824,000] \x1B[1;31m<err> adc_stm32: Invalid resolution\x1B[0m
+Ring buffer empty, disable TX IRQ[00:00:10.924,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:11.024,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:11.124,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:11.225,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:11.325,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:11.425,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:11.525,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:11.625,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:11.726,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:11.826,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:11.826,000] \x1B[1;31m<err> adc_stm32: Invalid resolution\x1B[0m
+Ring buffer empty, disable TX IRQ[00:00:11.926,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:12.026,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:12.126,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:12.227,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:12.327,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:12.427,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:12.527,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:12.627,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:12.728,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:12.828,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:12.828,000] \x1B[1;31m<err> adc_stm32: Invalid resolution\x1B[0m
+Ring buffer empty, disable TX IRQ[00:00:12.928,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:13.028,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:13.128,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:13.229,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:13.329,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:13.429,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:13.529,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:13.629,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:13.730,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:13.830,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:13.830,000] \x1B[1;31m<err> adc_stm32: Invalid resolution\x1B[0m
+Ring buffer empty, disable TX IRQ[00:00:13.930,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:14.030,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:14.130,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:14.231,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:14.331,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:14.431,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:14.531,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:14.631,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:14.732,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:14.832,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:14.832,000] \x1B[1;31m<err> adc_stm32: Invalid resolution\x1B[0m
+Ring buffer empty, disable TX IRQ[00:00:14.932,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:15.032,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:15.132,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:15.233,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:15.333,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:15.433,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:15.533,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:15.634,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:15.734,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:15.834,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:15.834,000] \x1B[1;31m<err> adc_stm32: Invalid resolution\x1B[0m
+Ring buffer empty, disable TX IRQ[00:00:15.934,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:16.034,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:16.135,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:16.235,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:16.335,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:16.435,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:16.535,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:16.636,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:16.736,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:16.836,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger command on TX: -5
+[00:00:16.836,000] \x1B[1;31m<err> adc_stm32: Invalid resolution\x1B[0m
+Ring buffer empty, disable TX IRQ[00:00:16.936,000] \x1B[1;31m<err> i2s_ll_stm32: START trigger: invalid state 2\x1B[0m
+Failed to trigger 
