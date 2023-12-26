@@ -16,7 +16,6 @@
 #include <zephyr/logging/log.h>
 
 #define STACK_SIZE 512
-#define MY_PRIORITY 5
 
 void task_update_peripherals(void *, void *, void *);
 
@@ -81,25 +80,21 @@ int main(void) {
 
     printuln("== Finished initialization ==");
 
-
-
-
-
     k_tid_t my_tid_0 = k_thread_create(&my_thread_data_0, stack0,
                                        K_THREAD_STACK_SIZEOF(stack0),
                                        task_update_peripherals,
                                        NULL, NULL, NULL,
-                                       2, 0, K_NO_WAIT);
+                                       5, 0, K_NO_WAIT);
     k_tid_t my_tid_1 = k_thread_create(&my_thread_data_1, stack1,
                                        K_THREAD_STACK_SIZEOF(stack1),
                                        task_check_keyboard,
                                        NULL, NULL, NULL,
-                                       2, 0, K_NO_WAIT);
+                                       5, 0, K_NO_WAIT);
     k_tid_t my_tid_2 = k_thread_create(&my_thread_data_2, stack2,
                                        K_THREAD_STACK_SIZEOF(stack2),
                                        task_make_and_write_audio,
                                        NULL, NULL, mem_block,
-                                       2, 0, K_NO_WAIT);
+                                       5, 0, K_NO_WAIT);
 
     k_thread_suspend(k_current_get());
     return 0;
