@@ -28,6 +28,10 @@ K_THREAD_STACK_DEFINE(stack0, STACK_SIZE);
 K_THREAD_STACK_DEFINE(stack1, STACK_SIZE);
 K_THREAD_STACK_DEFINE(stack2, STACK_SIZE);
 
+struct k_thread my_thread_data_0;
+struct k_thread my_thread_data_1;
+struct k_thread my_thread_data_2;
+
 Synthesizer synth;
 
 void check_keyboard() {
@@ -79,10 +83,7 @@ int main(void) {
 
 
 
-    struct k_thread my_thread_data_0;
-    struct k_thread my_thread_data_1;
-    struct k_thread my_thread_data_2;
-    struct k_thread my_thread_data_3;
+
 
     k_tid_t my_tid_0 = k_thread_create(&my_thread_data_0, stack0,
                                        K_THREAD_STACK_SIZEOF(stack0),
@@ -94,28 +95,11 @@ int main(void) {
                                        task_check_keyboard,
                                        NULL, NULL, NULL,
                                        2, 0, K_NO_WAIT);
-//    k_tid_t my_tid_2 = k_thread_create(&my_thread_data_2, stack2,
-//                                       K_THREAD_STACK_SIZEOF(stack2),
-//                                       task_make_and_write_audio,
-//                                       NULL, NULL, mem_block,
-//                                       2, 0, K_NO_WAIT);
-
-    int64_t time = k_uptime_get();
-    while (1) {
-        if (k_uptime_get() - time > BLOCK_GEN_PERIOD_MS - 1) {
-            // Make synth sound
-            set_led(&debug_led2);
-            synth.makesynth((uint8_t *) mem_block);
-            reset_led(&debug_led2);
-            //k_yield();
-
-            // Write audio block
-            set_led(&debug_led3);
-            writeBlock(mem_block);
-            reset_led(&debug_led3);
-            k_yield();
-        }
-    }
+    k_tid_t my_tid_2 = k_thread_create(&my_thread_data_2, stack2,
+                                       K_THREAD_STACK_SIZEOF(stack2),
+                                       task_make_and_write_audio,
+                                       NULL, NULL, mem_block,
+                                       2, 0, K_NO_WAIT);
 
     k_thread_suspend(k_current_get());
     return 0;
@@ -148,6 +132,20 @@ void task_check_keyboard(void * p1, void * p2, void * p3) {
 }
 
 void task_make_and_write_audio(void * p1, void * p2, void *mem_block) {
-    // Buffer for writing to audio driver
+    int64_t time = k_uptime_get();
+    while (1) {
+        if (k_uptime_get() - time > BLOCK_GEN_PERIOD_MS - 1) {
+            // Make synth sound
+            set_led(&debug_led2);
+            synth.makesynth((uint8_t *) mem_block);
+            reset_led(&debug_led2);
+            //k_yield();
 
+            // Write audio block
+            set_led(&debug_led3);
+            writeBlock(mem_block);
+            reset_led(&debug_led3);
+            k_yield();
+        }
+    }
 }
