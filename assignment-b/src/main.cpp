@@ -152,10 +152,14 @@ void task_make_audio(void *p1, void *p2, void *mem_block) {
         // Make synth sound
         set_led(&debug_led2);
         if (is_mem0) {
+            k_mutex_lock(&mutex_mem0, K_FOREVER);
             synth.makesynth((uint8_t *) mem_block);
+            k_mutex_unlock(&mutex_mem0);
             is_mem0 = false;
         } else {
+            k_mutex_lock(&mutex_mem1, K_FOREVER);
             synth.makesynth(((uint8_t *) mem_block) + int (BLOCK_SIZE));
+            k_mutex_unlock(&mutex_mem1);
             is_mem0 = true;
         }
         reset_led(&debug_led2);
@@ -175,10 +179,14 @@ void task_write_audio(void *p1, void *p2, void *mem_block) {
         } else {
             // Write audio block
             if (is_mem0){
+                k_mutex_lock(&mutex_mem0, K_FOREVER);
                 writeBlock(mem_block);
+                k_mutex_unlock(&mutex_mem0);
                 is_mem0 = false;
             } else {
+                k_mutex_lock(&mutex_mem1, K_FOREVER);
                 writeBlock(((uint8_t *) mem_block) + int (BLOCK_SIZE));
+                k_mutex_unlock(&mutex_mem1);
                 is_mem0 = true;
             }
 
