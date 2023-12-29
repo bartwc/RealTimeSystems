@@ -41,6 +41,8 @@ struct k_thread my_thread_data_3;
 
 K_MUTEX_DEFINE(mutex_keys);
 K_MUTEX_DEFINE(mutex_mem);
+K_MUTEX_DEFINE(mutex_mem1);
+K_MUTEX_DEFINE(mutex_mem0);
 
 Synthesizer synth;
 
@@ -144,39 +146,43 @@ void task_check_keyboard(void *p1, void *p2, void *p3) {
 
 void task_make_audio(void *p1, void *p2, void *mem_block) {
     int64_t time;
+    bool is_mem0 = true;
     while (1) {
         time = k_uptime_get();
         // Make synth sound
-
         set_led(&debug_led2);
-        k_mutex_lock(&mutex_mem, K_FOREVER);
-        // data race mem_block
-        synth.makesynth((uint8_t *) mem_block);
-        k_mutex_unlock(&mutex_mem);
+        if (is_mem0) {
+            synth.makesynth((uint8_t *) mem_block);
+            is_mem0 = false;
+        } else {
+            synth.makesynth(((uint8_t *) mem_block) + int (BLOCK_SIZE));
+            is_mem0 = true;
+        }
         reset_led(&debug_led2);
-
-//        set_led(&debug_led3);
-//        writeBlock(mem_block);
-//        reset_led(&debug_led3);
-
         k_sleep(K_MSEC(BLOCK_GEN_PERIOD_MS - (k_uptime_get() - time)));
     }
 }
 
 void task_write_audio(void *p1, void *p2, void *mem_block) {
     int64_t time;
+    bool is_mem0 = false;
+    bool is_first = true;
     while (1) {
-        //k_mutex_lock(&my_mutex, K_FOREVER);
         time = k_uptime_get();
-        // Write audio block
-
         set_led(&debug_led3);
+        if (is_first) {
+            is_first = false;
+        } else {
+            // Write audio block
+            if (is_mem0){
+                writeBlock(mem_block);
+                is_mem0 = false;
+            } else {
+                writeBlock(((uint8_t *) mem_block) + int (BLOCK_SIZE));
+                is_mem0 = true;
+            }
 
-        k_mutex_lock(&mutex_mem, K_FOREVER);
-        // data race mem_block
-        writeBlock(mem_block);
-        k_mutex_unlock(&mutex_mem);
-
+        }
         reset_led(&debug_led3);
         k_sleep(K_MSEC(BLOCK_GEN_PERIOD_MS - (k_uptime_get() - time)));
     }
