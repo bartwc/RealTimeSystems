@@ -177,6 +177,7 @@ int writeBlock(void *mem_block) {
     // We'll eventually want to check this return value
     !i2s_trigger(i2s_dev_tx, I2S_DIR_TX, I2S_TRIGGER_START);
 
+    // maybe data race ?
     ret = i2s_write(i2s_dev_tx, mem_block, BLOCK_SIZE);
     if (ret < 0) {
         printuln("Failed to write block 0: %d", ret);

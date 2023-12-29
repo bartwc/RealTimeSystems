@@ -150,6 +150,7 @@ void task_make_audio(void *p1, void *p2, void *mem_block) {
 
         set_led(&debug_led2);
         k_mutex_lock(&mutex_mem, K_FOREVER);
+        // data race mem_block
         synth.makesynth((uint8_t *) mem_block);
         k_mutex_unlock(&mutex_mem);
         reset_led(&debug_led2);
@@ -172,6 +173,7 @@ void task_write_audio(void *p1, void *p2, void *mem_block) {
         set_led(&debug_led3);
 
         k_mutex_lock(&mutex_mem, K_FOREVER);
+        // data race mem_block
         writeBlock(mem_block);
         k_mutex_unlock(&mutex_mem);
 

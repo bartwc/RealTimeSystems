@@ -130,6 +130,7 @@ int peripherals_update() {
     // Get the new ports states
     int ret = 0;
     for (int j = 0; j < 2; j++) {
+        //maybe data race ?
         ret = i2c_write_read(i2c_dev, PORT_EXPANDER_ADDR0,
                              &INPUT_PORTS_ADDR[j], 1, &ports[j], 1);
         if (ret != 0) {
@@ -140,6 +141,7 @@ int peripherals_update() {
 
     // Update the switches
     for (int i = 0; i < N_SWITCHES; i++) {
+        //data race to be investigated
         switches[i].update();
     }
 
@@ -155,6 +157,7 @@ int peripherals_update() {
         uint8_t pin1 = (ports[port] >> index1) & 0x01;
 
         // Initialize the encoder
+        // data race to be investigated
         encoders[i].update(pin0, pin1);
     }
 
