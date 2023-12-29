@@ -476,9 +476,16 @@ float Synthesizer::get_sound_sample(Key &key) {
 
     return (float) (sample1 + sample2);
 }
-
+k_timepoint_t watch_dog;
 void Synthesizer::makesynth(uint8_t *block) {
+    watch_dog = sys_timepoint_calc(K_MSEC(BLOCK_GEN_PERIOD_MS - 8));
     for (int i = 0; i < BLOCK_SIZE; i += 2) {
+        if (sys_timepoint_expired(watch_dog)) {
+            for (int j = 0; j < BLOCK_SIZE; j++) {
+                block[j] = 0;
+            }
+            break;
+        }
         float sample = 0;
 
         // get the synthesized sound for every pressed key
