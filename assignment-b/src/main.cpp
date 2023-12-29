@@ -25,10 +25,14 @@ void task_write_audio(void *, void *, void *);
 
 void task_make_audio(void *, void *, void *);
 
-K_THREAD_STACK_DEFINE(stack0, STACK_SIZE);
-K_THREAD_STACK_DEFINE(stack1, STACK_SIZE);
-K_THREAD_STACK_DEFINE(stack2, STACK_SIZE);
-K_THREAD_STACK_DEFINE(stack3, STACK_SIZE);
+K_THREAD_STACK_DEFINE(stack0,
+STACK_SIZE);
+K_THREAD_STACK_DEFINE(stack1,
+STACK_SIZE);
+K_THREAD_STACK_DEFINE(stack2,
+STACK_SIZE);
+K_THREAD_STACK_DEFINE(stack3,
+STACK_SIZE);
 
 struct k_thread my_thread_data_0;
 struct k_thread my_thread_data_1;
@@ -112,7 +116,7 @@ int main(void) {
     return 0;
 }
 
-void task_update_peripherals(void * p1, void * p2, void * p3) {
+void task_update_peripherals(void *p1, void *p2, void *p3) {
     int64_t time;
     while (1) {
         time = k_uptime_get();
@@ -125,7 +129,7 @@ void task_update_peripherals(void * p1, void * p2, void * p3) {
     }
 }
 
-void task_check_keyboard(void * p1, void * p2, void * p3) {
+void task_check_keyboard(void *p1, void *p2, void *p3) {
     int64_t time;
     while (1) {
         time = k_uptime_get();
@@ -138,7 +142,7 @@ void task_check_keyboard(void * p1, void * p2, void * p3) {
     }
 }
 
-void task_make_audio(void * p1, void * p2, void *mem_block) {
+void task_make_audio(void *p1, void *p2, void *mem_block) {
     int64_t time;
     while (1) {
         time = k_uptime_get();
@@ -158,7 +162,7 @@ void task_make_audio(void * p1, void * p2, void *mem_block) {
     }
 }
 
-void task_write_audio(void * p1, void * p2, void *mem_block) {
+void task_write_audio(void *p1, void *p2, void *mem_block) {
     int64_t time;
     while (1) {
         //k_mutex_lock(&my_mutex, K_FOREVER);
