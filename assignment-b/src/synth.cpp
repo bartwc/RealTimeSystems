@@ -484,7 +484,8 @@ void Synthesizer::makesynth(uint8_t *block) {
             for (int j = 0; j < BLOCK_SIZE; j++) {
                 block[j] = 0;
             }
-            break;
+            set_led(&status_led3);
+            return;
         }
         float sample = 0;
 
@@ -513,4 +514,5 @@ void Synthesizer::makesynth(uint8_t *block) {
         block[i] = (int16_t) sample & 0xFF;
         block[i + 1] = (int16_t) sample >> 8;
     }
+    reset_led(&status_led3);
 }
