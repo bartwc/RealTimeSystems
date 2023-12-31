@@ -186,6 +186,7 @@ void task_write_audio(void *p1, void *p2, void *mem_block) {
         set_led(&debug_led3);
         if (is_first) {
             is_first = false;
+            is_mem0 = true;
         } else {
             // Write audio block
             if (is_mem0){
