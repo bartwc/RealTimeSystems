@@ -9,7 +9,7 @@
 #include <zephyr/logging/log.h>
 
 #define I2S_TX_NODE DT_NODELABEL(i2s_tx)
-K_MEM_SLAB_DEFINE_STATIC(mem_slab, BLOCK_SIZE, BLOCK_COUNT, 4);
+K_MEM_SLAB_DEFINE_STATIC(mem_slab, BLOCK_SIZE * 2, BLOCK_COUNT, 4);
 
 /* 1000 msec = 1 sec */
 #define SLEEP_TIME_MS 1000

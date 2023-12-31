@@ -110,7 +110,7 @@ int main(void) {
                                        K_THREAD_STACK_SIZEOF(stack3),
                                        task_write_audio,
                                        NULL, NULL, mem_block,
-                                       5, 0, K_NO_WAIT);
+                                       6, 0, K_NO_WAIT);
 
     k_thread_suspend(k_current_get());
     return 0;

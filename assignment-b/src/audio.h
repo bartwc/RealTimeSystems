@@ -27,7 +27,7 @@
 #define BLOCK_SIZE (BYTES_PER_SAMPLE * SAMPLES_PER_BLOCK) 
 
 // the number of audio blocks to use
-#define BLOCK_COUNT (2)
+#define BLOCK_COUNT (1)
 
 
 
