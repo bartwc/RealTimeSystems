@@ -40,7 +40,7 @@ struct k_thread my_thread_data_2;
 struct k_thread my_thread_data_3;
 
 K_MUTEX_DEFINE(mutex_keys);
-K_MUTEX_DEFINE(mutex_mem);
+K_MUTEX_DEFINE(mutex_rotary);
 K_MUTEX_DEFINE(mutex_mem1);
 K_MUTEX_DEFINE(mutex_mem0);
 
@@ -124,7 +124,9 @@ void task_update_peripherals(void *p1, void *p2, void *p3) {
         time = k_uptime_get();
         // Check the peripherals input
         set_led(&debug_led0);
+        k_mutex_lock(&mutex_rotary, K_FOREVER);
         peripherals_update();
+        k_mutex_unlock(&mutex_rotary);
         reset_led(&debug_led0);
 
         k_sleep(K_MSEC(BLOCK_GEN_PERIOD_MS - (k_uptime_get() - time)));
@@ -137,7 +139,9 @@ void task_check_keyboard(void *p1, void *p2, void *p3) {
         time = k_uptime_get();
         // Get user input from the keyboard
         set_led(&debug_led1);
+        k_mutex_lock(&mutex_keys, K_FOREVER);
         check_keyboard();
+        k_mutex_unlock(&mutex_keys);
         reset_led(&debug_led1);
 
         k_sleep(K_MSEC(BLOCK_GEN_PERIOD_MS - (k_uptime_get() - time)));
@@ -153,12 +157,20 @@ void task_make_audio(void *p1, void *p2, void *mem_block) {
         set_led(&debug_led2);
         if (is_mem0) {
             k_mutex_lock(&mutex_mem0, K_FOREVER);
+            k_mutex_lock(&mutex_keys, K_FOREVER);
+            k_mutex_lock(&mutex_rotary, K_FOREVER);
             synth.makesynth((uint8_t *) mem_block);
+            k_mutex_unlock(&mutex_rotary);
+            k_mutex_unlock(&mutex_keys);
             k_mutex_unlock(&mutex_mem0);
             is_mem0 = false;
         } else {
             k_mutex_lock(&mutex_mem1, K_FOREVER);
+            k_mutex_lock(&mutex_keys, K_FOREVER);
+            k_mutex_lock(&mutex_rotary, K_FOREVER);
             synth.makesynth(((uint8_t *) mem_block) + int (BLOCK_SIZE));
+            k_mutex_unlock(&mutex_rotary);
+            k_mutex_unlock(&mutex_keys);
             k_mutex_unlock(&mutex_mem1);
             is_mem0 = true;
         }
