@@ -67,4 +67,13 @@ int8_t read_port0();
 /// @return the port expander's port 1
 int8_t read_port1();
 
+extern const struct gpio_dt_spec sw_osc_dn;
+extern const struct gpio_dt_spec sw_osc_up;
+extern const struct gpio_dt_spec sw1_dn;
+extern const struct gpio_dt_spec sw1_up;
+extern const struct gpio_dt_spec sw2_dn;
+extern const struct gpio_dt_spec sw2_up;
+extern const struct gpio_dt_spec sw3_dn;
+extern const struct gpio_dt_spec sw3_up;
+
 #endif

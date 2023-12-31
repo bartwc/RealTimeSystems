@@ -14,6 +14,7 @@
 #include <math.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/drivers/gpio.h>
 
 #define STACK_SIZE 2048
 
@@ -38,6 +39,19 @@ struct k_thread my_thread_data_0;
 struct k_thread my_thread_data_1;
 struct k_thread my_thread_data_2;
 struct k_thread my_thread_data_3;
+
+
+
+static struct gpio_callback sw0_cb;
+static struct gpio_callback sw1_cb;
+static struct gpio_callback sw2_cb;
+static struct gpio_callback sw3_cb;
+static struct gpio_callback sw4_cb;
+static struct gpio_callback sw5_cb;
+static struct gpio_callback sw6_cb;
+static struct gpio_callback sw7_cb;
+void switch_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins);
+void attach_interrupt_switch(void);
 
 K_MUTEX_DEFINE(mutex_keys);
 K_MUTEX_DEFINE(mutex_rotary);
@@ -89,13 +103,15 @@ int main(void) {
 
     void *mem_block = allocBlock();
 
+    attach_interrupt_switch();
+
     printuln("== Finished initialization ==");
 
-    k_tid_t my_tid_0 = k_thread_create(&my_thread_data_0, stack0,
-                                       K_THREAD_STACK_SIZEOF(stack0),
-                                       task_update_peripherals,
-                                       NULL, NULL, NULL,
-                                       4, 0, K_NO_WAIT);
+//    k_tid_t my_tid_0 = k_thread_create(&my_thread_data_0, stack0,
+//                                       K_THREAD_STACK_SIZEOF(stack0),
+//                                       task_update_peripherals,
+//                                       NULL, NULL, NULL,
+//                                       4, 0, K_NO_WAIT);
     k_tid_t my_tid_1 = k_thread_create(&my_thread_data_1, stack1,
                                        K_THREAD_STACK_SIZEOF(stack1),
                                        task_check_keyboard,
@@ -205,4 +221,48 @@ void task_write_audio(void *p1, void *p2, void *mem_block) {
         reset_led(&debug_led3);
         k_sleep(K_MSEC(BLOCK_GEN_PERIOD_MS - (k_uptime_get() - time)));
     }
+}
+
+void attach_interrupt_switch(void) {
+    int ret0 = gpio_pin_interrupt_configure_dt(&sw_osc_dn, GPIO_INT_EDGE_BOTH);
+    int ret1 = gpio_pin_interrupt_configure_dt(&sw_osc_up, GPIO_INT_EDGE_BOTH);
+    int ret2 = gpio_pin_interrupt_configure_dt(&sw1_dn, GPIO_INT_EDGE_BOTH);
+    int ret3 = gpio_pin_interrupt_configure_dt(&sw1_up, GPIO_INT_EDGE_BOTH);
+    int ret4 = gpio_pin_interrupt_configure_dt(&sw2_dn, GPIO_INT_EDGE_BOTH);
+    int ret5 = gpio_pin_interrupt_configure_dt(&sw2_up, GPIO_INT_EDGE_BOTH);
+    int ret6 = gpio_pin_interrupt_configure_dt(&sw3_dn, GPIO_INT_EDGE_BOTH);
+    int ret7 = gpio_pin_interrupt_configure_dt(&sw3_up, GPIO_INT_EDGE_BOTH);
+
+    if (ret0 != 0 || ret1 != 0 || ret2 != 0 || ret3 != 0 || ret4 != 0 || ret5 != 0 || ret6 != 0 || ret7 != 0) {
+        printuln("failed to configure interrupt on switches.\n");
+        return;
+    }
+
+    // initialize callback structure for button interrupt
+    gpio_init_callback(&sw0_cb, switch_pressed, BIT(sw_osc_dn.pin));
+    gpio_init_callback(&sw1_cb, switch_pressed, BIT(sw_osc_up.pin));
+    gpio_init_callback(&sw2_cb, switch_pressed, BIT(sw1_up.pin));
+    gpio_init_callback(&sw3_cb, switch_pressed, BIT(sw2_up.pin));
+    gpio_init_callback(&sw4_cb, switch_pressed, BIT(sw3_up.pin));
+    gpio_init_callback(&sw5_cb, switch_pressed, BIT(sw1_dn.pin));
+    gpio_init_callback(&sw6_cb, switch_pressed, BIT(sw2_dn.pin));
+    gpio_init_callback(&sw7_cb, switch_pressed, BIT(sw3_dn.pin));
+
+    // attach callback function to button interrupt
+    gpio_add_callback(sw_osc_dn.port, &sw0_cb);
+    gpio_add_callback(sw_osc_up.port, &sw1_cb);
+    gpio_add_callback(sw1_up.port, &sw2_cb);
+    gpio_add_callback(sw2_up.port, &sw3_cb);
+    gpio_add_callback(sw3_up.port, &sw4_cb);
+    gpio_add_callback(sw1_dn.port, &sw5_cb);
+    gpio_add_callback(sw2_dn.port, &sw6_cb);
+    gpio_add_callback(sw3_dn.port, &sw7_cb);
+}
+
+void switch_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
+{
+    set_led(&debug_led0);
+
+    reset_led(&debug_led0);
+    return;
 }
