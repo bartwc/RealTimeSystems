@@ -16,7 +16,7 @@
  * Constants for configuring memory slab used as buffer for I2S driver
 */
 // Want to generate a block of audio samples every 50 ms = 0.05 s
-#define BLOCK_GEN_PERIOD_S (0.06)
+#define BLOCK_GEN_PERIOD_S (0.05)
 #define BLOCK_GEN_PERIOD_MS (BLOCK_GEN_PERIOD_S * 1000)
 
 // How many samples we can produce within the block generation period given

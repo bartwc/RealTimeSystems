@@ -113,22 +113,22 @@ int main(void) {
                                        K_THREAD_STACK_SIZEOF(stack0),
                                        task_update_peripherals,
                                        NULL, NULL, NULL,
-                                       4, 0, K_NO_WAIT);
+                                       1, 0, K_NO_WAIT);
     k_tid_t my_tid_1 = k_thread_create(&my_thread_data_1, stack1,
                                        K_THREAD_STACK_SIZEOF(stack1),
                                        task_check_keyboard,
                                        NULL, NULL, NULL,
-                                       4, 0, K_NO_WAIT);
+                                       2, 0, K_NO_WAIT);
     k_tid_t my_tid_2 = k_thread_create(&my_thread_data_2, stack2,
                                        K_THREAD_STACK_SIZEOF(stack2),
                                        task_make_audio,
                                        NULL, NULL, mem_block,
-                                       5, 0, K_NO_WAIT);
+                                       3, 0, K_NO_WAIT);
     k_tid_t my_tid_3 = k_thread_create(&my_thread_data_3, stack3,
                                        K_THREAD_STACK_SIZEOF(stack3),
                                        task_write_audio,
                                        NULL, NULL, mem_block,
-                                       6, 0, K_NO_WAIT);
+                                       4, 0, K_NO_WAIT);
 
     k_thread_suspend(k_current_get());
     return 0;
