@@ -103,15 +103,15 @@ int main(void) {
 
     void *mem_block = allocBlock();
 
-    attach_interrupt_switch();
+    //attach_interrupt_switch();
 
     printuln("== Finished initialization ==");
 
-//    k_tid_t my_tid_0 = k_thread_create(&my_thread_data_0, stack0,
-//                                       K_THREAD_STACK_SIZEOF(stack0),
-//                                       task_update_peripherals,
-//                                       NULL, NULL, NULL,
-//                                       4, 0, K_NO_WAIT);
+    k_tid_t my_tid_0 = k_thread_create(&my_thread_data_0, stack0,
+                                       K_THREAD_STACK_SIZEOF(stack0),
+                                       task_update_peripherals,
+                                       NULL, NULL, NULL,
+                                       4, 0, K_NO_WAIT);
     k_tid_t my_tid_1 = k_thread_create(&my_thread_data_1, stack1,
                                        K_THREAD_STACK_SIZEOF(stack1),
                                        task_check_keyboard,
