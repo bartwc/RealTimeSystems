@@ -55,6 +55,8 @@ void attach_interrupt_switch(void);
 
 K_MUTEX_DEFINE(mutex_keys);
 K_MUTEX_DEFINE(mutex_rotary);
+K_SEM_DEFINE(sem_mem0, 0, 1);
+K_SEM_DEFINE(sem_mem1, 0, 1);
 
 Synthesizer synth;
 
@@ -170,22 +172,20 @@ void task_make_audio(void *p1, void *p2, void *mem_block) {
         // Make synth sound
         set_led(&debug_led2);
         if (is_mem0) {
-            //k_mutex_lock(&mutex_mem0, K_FOREVER);
             k_mutex_lock(&mutex_keys, K_FOREVER);
             k_mutex_lock(&mutex_rotary, K_FOREVER);
             synth.makesynth((uint8_t *) mem_block);
             k_mutex_unlock(&mutex_rotary);
             k_mutex_unlock(&mutex_keys);
-            //k_mutex_unlock(&mutex_mem0);
+            k_sem_give(&sem_mem0);
             is_mem0 = false;
         } else {
-            //k_mutex_lock(&mutex_mem1, K_FOREVER);
             k_mutex_lock(&mutex_keys, K_FOREVER);
             k_mutex_lock(&mutex_rotary, K_FOREVER);
             synth.makesynth(((uint8_t *) mem_block) + int (BLOCK_SIZE));
             k_mutex_unlock(&mutex_rotary);
             k_mutex_unlock(&mutex_keys);
-            //k_mutex_unlock(&mutex_mem1);
+            k_sem_give(&sem_mem1);
             is_mem0 = true;
         }
         reset_led(&debug_led2);
@@ -195,28 +195,14 @@ void task_make_audio(void *p1, void *p2, void *mem_block) {
 
 void task_write_audio(void *p1, void *p2, void *mem_block) {
     int64_t time;
-    bool is_mem0 = false;
-    bool is_first = true;
     while (1) {
         time = k_uptime_get();
         set_led(&debug_led3);
-        if (is_first) {
-            is_first = false;
-            is_mem0 = true;
-        } else {
-            // Write audio block
-            if (is_mem0){
-                //k_mutex_lock(&mutex_mem0, K_FOREVER);
-                writeBlock(mem_block);
-                //k_mutex_unlock(&mutex_mem0);
-                is_mem0 = false;
-            } else {
-                //k_mutex_lock(&mutex_mem1, K_FOREVER);
-                writeBlock(((uint8_t *) mem_block) + int (BLOCK_SIZE));
-                //k_mutex_unlock(&mutex_mem1);
-                is_mem0 = true;
-            }
-
+        if (k_sem_take(&sem_mem0, K_NO_WAIT) == 0){
+            writeBlock(mem_block);
+        }
+        if (k_sem_take(&sem_mem1, K_NO_WAIT) == 0) {
+            writeBlock(((uint8_t *) mem_block) + int (BLOCK_SIZE));
         }
         reset_led(&debug_led3);
         k_sleep(K_MSEC(BLOCK_GEN_PERIOD_MS - (k_uptime_get() - time)));
