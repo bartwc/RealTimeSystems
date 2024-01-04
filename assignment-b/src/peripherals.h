@@ -8,6 +8,7 @@
 const unsigned int N_ENCODERS = 6;
 const unsigned int N_SWITCHES = 4;
 
+// data race to be investigated
 /// @brief Peripheral encoders
 extern RotaryEncoder encoders[N_ENCODERS];
 
@@ -36,7 +37,7 @@ const uint8_t AMP_MOD_SUS_ENC = 4;
 // Encoder for configuring amplitude modulator release
 const uint8_t AMP_REL_ENC = 5;
 
-
+// data race to be investigated
 /// @brief Peripheral switches
 extern ThreePosSwitch switches[N_SWITCHES];
 
@@ -65,5 +66,14 @@ int8_t read_port0();
 /// @brief Read the port expander's port 1
 /// @return the port expander's port 1
 int8_t read_port1();
+
+extern const struct gpio_dt_spec sw_osc_dn;
+extern const struct gpio_dt_spec sw_osc_up;
+extern const struct gpio_dt_spec sw1_dn;
+extern const struct gpio_dt_spec sw1_up;
+extern const struct gpio_dt_spec sw2_dn;
+extern const struct gpio_dt_spec sw2_up;
+extern const struct gpio_dt_spec sw3_dn;
+extern const struct gpio_dt_spec sw3_up;
 
 #endif

@@ -27,9 +27,9 @@ RotaryEncoder encoders[N_ENCODERS];
 
 // GPIOs
 const struct gpio_dt_spec sw_osc_dn =
-    GPIO_DT_SPEC_GET(DT_ALIAS(switch0), gpios);
+        GPIO_DT_SPEC_GET(DT_ALIAS(switch0), gpios);
 const struct gpio_dt_spec sw_osc_up =
-    GPIO_DT_SPEC_GET(DT_ALIAS(switch1), gpios);
+        GPIO_DT_SPEC_GET(DT_ALIAS(switch1), gpios);
 const struct gpio_dt_spec sw1_dn = GPIO_DT_SPEC_GET(DT_ALIAS(switch4), gpios);
 const struct gpio_dt_spec sw1_up = GPIO_DT_SPEC_GET(DT_ALIAS(switch5), gpios);
 const struct gpio_dt_spec sw2_dn = GPIO_DT_SPEC_GET(DT_ALIAS(switch6), gpios);
@@ -47,116 +47,119 @@ static uint8_t ports[2];
 // There is no other way
 int get_port_and_index(unsigned int encoder_id, unsigned int pin,
                        unsigned int &port, unsigned int &index) {
-  if (encoder_id >= N_ENCODERS || pin > 1) {
-    return -EINVAL;
-  }
+    if (encoder_id >= N_ENCODERS || pin > 1) {
+        return -EINVAL;
+    }
 
-  switch (encoder_id) {
-  case 0:
-    port = 0;
-    index = 0 + pin;
-    break;
-  case 1:
-    port = 0;
-    index = 2 + pin;
-    break;
-  case 2:
-    port = 0;
-    index = 4 + pin;
-    break;
-  case 3:
-    port = 0;
-    index = 6 + pin;
-    break;
-  case 4:
-    port = 1;
-    index = 0 + pin;
-    break;
-  case 5:
-    port = 1;
-    index = 2 + pin;
-    break;
-  default:
-    break;
-  }
-  return 0;
+    switch (encoder_id) {
+        case 0:
+            port = 0;
+            index = 0 + pin;
+            break;
+        case 1:
+            port = 0;
+            index = 2 + pin;
+            break;
+        case 2:
+            port = 0;
+            index = 4 + pin;
+            break;
+        case 3:
+            port = 0;
+            index = 6 + pin;
+            break;
+        case 4:
+            port = 1;
+            index = 0 + pin;
+            break;
+        case 5:
+            port = 1;
+            index = 2 + pin;
+            break;
+        default:
+            break;
+    }
+    return 0;
 }
 
 int init_peripherals() {
-  // Check the I2c port
-  if (!device_is_ready(i2c_dev)) {
-    printuln("I2C device not ready");
-    return 1;
-  }
-
-  // Get the initial state of the device
-  int ret = 0;
-  for (int j = 0; j < 2; j++) {
-    ret = i2c_write_read(i2c_dev, PORT_EXPANDER_ADDR0,
-                          &INPUT_PORTS_ADDR[j], 1, &ports[j], 1);
-    if (ret != 0) {
-      printuln("Failed reading port expander.");
-      return ret;
+    // Check the I2c port
+    if (!device_is_ready(i2c_dev)) {
+        printuln("I2C device not ready");
+        return 1;
     }
-  }
 
-  // Instantiate the rotary encoders
-  for (int i = 0; i < N_ENCODERS; i++) {
-    // Get the encoder's pins
-    unsigned int port;
-    unsigned int index0;
-    unsigned int index1;
-    get_port_and_index(i, 0, port, index0);
-    get_port_and_index(i, 1, port, index1);
-    uint8_t pin0 = (ports[port] >> index0) & 0x01;
-    uint8_t pin1 = (ports[port] >> index1) & 0x01;
+    // Get the initial state of the device
+    int ret = 0;
+    for (int j = 0; j < 2; j++) {
+        ret = i2c_write_read(i2c_dev, PORT_EXPANDER_ADDR0,
+                             &INPUT_PORTS_ADDR[j], 1, &ports[j], 1);
+        if (ret != 0) {
+            printuln("Failed reading port expander.");
+            return ret;
+        }
+    }
 
-    // Initialize the encoder
-    encoders[i].initialize(i, pin0, pin1);
-  }
+    // Instantiate the rotary encoders
+    for (int i = 0; i < N_ENCODERS; i++) {
+        // Get the encoder's pins
+        unsigned int port;
+        unsigned int index0;
+        unsigned int index1;
+        get_port_and_index(i, 0, port, index0);
+        get_port_and_index(i, 1, port, index1);
+        uint8_t pin0 = (ports[port] >> index0) & 0x01;
+        uint8_t pin1 = (ports[port] >> index1) & 0x01;
 
-  // Initialize the switches
-  switches[LPF_OSC_SEL_SW].initialize(&sw_osc_up, &sw_osc_dn);
-  switches[LFO_TARGET_SW].initialize(&sw1_up, &sw1_dn);
-  switches[AMP_MOD_TARGET_SW].initialize(&sw2_up, &sw2_dn);
-  switches[LFO_AMP_MOD_SEL_SW].initialize(&sw3_up, &sw3_dn);
+        // Initialize the encoder
+        encoders[i].initialize(i, pin0, pin1);
+    }
 
-  printuln("Peripherals initialization completed!");
+    // Initialize the switches
+    switches[LPF_OSC_SEL_SW].initialize(&sw_osc_up, &sw_osc_dn);
+    switches[LFO_TARGET_SW].initialize(&sw1_up, &sw1_dn);
+    switches[AMP_MOD_TARGET_SW].initialize(&sw2_up, &sw2_dn);
+    switches[LFO_AMP_MOD_SEL_SW].initialize(&sw3_up, &sw3_dn);
 
-  return 0;
+    printuln("Peripherals initialization completed!");
+
+    return 0;
 }
 
 int peripherals_update() {
-  // Get the new ports states
-  int ret = 0;
-  for (int j = 0; j < 2; j++) {
-    ret = i2c_write_read(i2c_dev, PORT_EXPANDER_ADDR0,
-                          &INPUT_PORTS_ADDR[j], 1, &ports[j], 1);
-    if (ret != 0) {
-      printuln("Failed reading port expander.");
-      return ret;
+    // Get the new ports states
+    int ret = 0;
+    for (int j = 0; j < 2; j++) {
+        //maybe data race ?
+        ret = i2c_write_read(i2c_dev, PORT_EXPANDER_ADDR0,
+                             &INPUT_PORTS_ADDR[j], 1, &ports[j], 1);
+        if (ret != 0) {
+            printuln("Failed reading port expander.");
+            return ret;
+        }
     }
-  }
 
-  // Update the switches
-  for (int i = 0; i < N_SWITCHES; i++) {
-    switches[i].update();
-  }
+    // Update the switches
+    for (int i = 0; i < N_SWITCHES; i++) {
+        //data race to be investigated
+        switches[i].update();
+    }
 
-  // Update the rotary encoders
-  for (int i = 0; i < N_ENCODERS; i++) {
-    // Get the encoder's pins
-    unsigned int port;
-    unsigned int index0;
-    unsigned int index1;
-    get_port_and_index(i, 0, port, index0);
-    get_port_and_index(i, 1, port, index1);
-    uint8_t pin0 = (ports[port] >> index0) & 0x01;
-    uint8_t pin1 = (ports[port] >> index1) & 0x01;
+    // Update the rotary encoders
+    for (int i = 0; i < N_ENCODERS; i++) {
+        // Get the encoder's pins
+        unsigned int port;
+        unsigned int index0;
+        unsigned int index1;
+        get_port_and_index(i, 0, port, index0);
+        get_port_and_index(i, 1, port, index1);
+        uint8_t pin0 = (ports[port] >> index0) & 0x01;
+        uint8_t pin1 = (ports[port] >> index1) & 0x01;
 
-    // Initialize the encoder
-    encoders[i].update(pin0, pin1);
-  }
+        // Initialize the encoder
+        // data race to be investigated
+        encoders[i].update(pin0, pin1);
+    }
 
-  return 0;
+    return 0;
 }
