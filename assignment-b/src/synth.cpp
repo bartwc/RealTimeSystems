@@ -490,6 +490,7 @@ void Synthesizer::makesynth(uint8_t *block) {
         float sample = 0;
 
         // get the synthesized sound for every pressed key
+        // data race Keys[] in thread task_make_audio(main.cpp)
         for (int j = 0; j < MAX_KEYS; j++) {
             if (keys[j].state == PRESSED &&
                 !sys_timepoint_expired(keys[j].hold_time)) {

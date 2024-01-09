@@ -8,7 +8,7 @@
 const unsigned int N_ENCODERS = 6;
 const unsigned int N_SWITCHES = 4;
 
-// data race to be investigated
+// data race encoders[] declared
 /// @brief Peripheral encoders
 extern RotaryEncoder encoders[N_ENCODERS];
 
@@ -37,7 +37,7 @@ const uint8_t AMP_MOD_SUS_ENC = 4;
 // Encoder for configuring amplitude modulator release
 const uint8_t AMP_REL_ENC = 5;
 
-// data race to be investigated
+// data race switches[] declared
 /// @brief Peripheral switches
 extern ThreePosSwitch switches[N_SWITCHES];
 

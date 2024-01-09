@@ -141,7 +141,7 @@ int peripherals_update() {
 
     // Update the switches
     for (int i = 0; i < N_SWITCHES; i++) {
-        //data race to be investigated
+        //data race switches[] in thread task_update_peripherals (main.cpp)
         switches[i].update();
     }
 
@@ -157,7 +157,7 @@ int peripherals_update() {
         uint8_t pin1 = (ports[port] >> index1) & 0x01;
 
         // Initialize the encoder
-        // data race to be investigated
+        // data race encoders[] in thread task_update_peripherals (main.cpp)
         encoders[i].update(pin0, pin1);
     }
 

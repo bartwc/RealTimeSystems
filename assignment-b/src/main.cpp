@@ -61,6 +61,7 @@ K_SEM_DEFINE(sem_mem1, 0, 1);
 Synthesizer synth;
 
 void check_keyboard() {
+    // data race Keys[] in thread task_check_keyboard(main.cpp)
     char character;
     while (usbRead(&character, 1)) {
         auto key = Key::char_to_key(character);
