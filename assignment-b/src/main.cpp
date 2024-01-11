@@ -50,6 +50,7 @@ static struct gpio_callback sw4_cb;
 static struct gpio_callback sw5_cb;
 static struct gpio_callback sw6_cb;
 static struct gpio_callback sw7_cb;
+static struct gpio_callback rot_cb;
 void switch_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins);
 void attach_interrupt_switch(void);
 
@@ -57,6 +58,7 @@ K_MUTEX_DEFINE(mutex_keys);
 K_MUTEX_DEFINE(mutex_rotary);
 K_SEM_DEFINE(sem_mem0, 0, 1);
 K_SEM_DEFINE(sem_mem1, 0, 1);
+K_SEM_DEFINE(sem_peripherals, 0, 1);
 
 K_TIMER_DEFINE(sync_timer_task1, NULL, NULL);
 K_TIMER_DEFINE(sync_timer_task2, NULL, NULL);
@@ -119,7 +121,7 @@ int main(void) {
                                        K_THREAD_STACK_SIZEOF(stack0),
                                        task_update_peripherals,
                                        NULL, NULL, NULL,
-                                       1, 0, K_NO_WAIT);
+                                       -1, 0, K_NO_WAIT);
     k_tid_t my_tid_1 = k_thread_create(&my_thread_data_1, stack1,
                                        K_THREAD_STACK_SIZEOF(stack1),
                                        task_check_keyboard,
@@ -135,22 +137,25 @@ int main(void) {
                                        task_write_audio,
                                        NULL, NULL, mem_block,
                                        4, 0, K_NO_WAIT);
-
+    attach_interrupt_switch();
     k_thread_suspend(k_current_get());
     return 0;
 }
 
 void task_update_peripherals(void *p1, void *p2, void *p3) {
-    k_timer_start(&sync_timer_task1, K_MSEC(5), K_MSEC(5));
+    //k_timer_start(&sync_timer_task1, K_MSEC(5), K_MSEC(5));
     while (1) {
         // Check the peripherals input
-        set_led(&debug_led0);
-        k_mutex_lock(&mutex_rotary, K_FOREVER);
-        peripherals_update();
-        k_mutex_unlock(&mutex_rotary);
-        reset_led(&debug_led0);
+        if (k_sem_take(&sem_peripherals, K_FOREVER) == 0) {
+            set_led(&debug_led0);
+            //k_mutex_lock(&mutex_rotary, K_FOREVER);
+            peripherals_update();
+            //k_mutex_unlock(&mutex_rotary);
+            reset_led(&debug_led0);
+        }
 
-        k_timer_status_sync(&sync_timer_task1);
+
+        //k_timer_status_sync(&sync_timer_task1);
     }
 }
 
@@ -159,9 +164,9 @@ void task_check_keyboard(void *p1, void *p2, void *p3) {
     while (1) {
         // Get user input from the keyboard
         set_led(&debug_led1);
-        k_mutex_lock(&mutex_keys, K_FOREVER);
+        //k_mutex_lock(&mutex_keys, K_FOREVER);
         check_keyboard();
-        k_mutex_unlock(&mutex_keys);
+        //k_mutex_unlock(&mutex_keys);
         reset_led(&debug_led1);
 
         k_timer_status_sync(&sync_timer_task2);
@@ -220,8 +225,9 @@ void attach_interrupt_switch(void) {
     int ret5 = gpio_pin_interrupt_configure_dt(&sw2_up, GPIO_INT_EDGE_BOTH);
     int ret6 = gpio_pin_interrupt_configure_dt(&sw3_dn, GPIO_INT_EDGE_BOTH);
     int ret7 = gpio_pin_interrupt_configure_dt(&sw3_up, GPIO_INT_EDGE_BOTH);
+    int ret8 = gpio_pin_interrupt_configure_dt(&rot_int, GPIO_INT_EDGE_FALLING);
 
-    if (ret0 != 0 || ret1 != 0 || ret2 != 0 || ret3 != 0 || ret4 != 0 || ret5 != 0 || ret6 != 0 || ret7 != 0) {
+    if (ret0 != 0 || ret1 != 0 || ret2 != 0 || ret3 != 0 || ret4 != 0 || ret5 != 0 || ret6 != 0 || ret7 != 0 || ret8 != 0) {
         printuln("failed to configure interrupt on switches.\n");
         return;
     }
@@ -235,6 +241,7 @@ void attach_interrupt_switch(void) {
     gpio_init_callback(&sw5_cb, switch_pressed, BIT(sw1_dn.pin));
     gpio_init_callback(&sw6_cb, switch_pressed, BIT(sw2_dn.pin));
     gpio_init_callback(&sw7_cb, switch_pressed, BIT(sw3_dn.pin));
+    gpio_init_callback(&rot_cb, switch_pressed, BIT(rot_int.pin));
 
     // attach callback function to button interrupt
     gpio_add_callback(sw_osc_dn.port, &sw0_cb);
@@ -245,12 +252,11 @@ void attach_interrupt_switch(void) {
     gpio_add_callback(sw1_dn.port, &sw5_cb);
     gpio_add_callback(sw2_dn.port, &sw6_cb);
     gpio_add_callback(sw3_dn.port, &sw7_cb);
+    gpio_add_callback(rot_int.port, &rot_cb);
 }
 
 void switch_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
-    set_led(&debug_led0);
-
-    reset_led(&debug_led0);
+    k_sem_give(&sem_peripherals);
     return;
 }

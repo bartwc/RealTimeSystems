@@ -75,5 +75,6 @@ extern const struct gpio_dt_spec sw2_dn;
 extern const struct gpio_dt_spec sw2_up;
 extern const struct gpio_dt_spec sw3_dn;
 extern const struct gpio_dt_spec sw3_up;
+extern const struct gpio_dt_spec rot_int;
 
 #endif

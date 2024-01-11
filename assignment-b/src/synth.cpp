@@ -478,7 +478,7 @@ float Synthesizer::get_sound_sample(Key &key) {
 }
 K_TIMER_DEFINE(timer_task_overload, NULL, NULL);
 void Synthesizer::makesynth(uint8_t *block) {
-    k_timer_start(&timer_task_overload, K_MSEC(BLOCK_GEN_PERIOD_MS - 8), K_NO_WAIT);
+    k_timer_start(&timer_task_overload, K_MSEC(BLOCK_GEN_PERIOD_MS - 5), K_NO_WAIT);
     for (int i = 0; i < BLOCK_SIZE; i += 2) {
         if (k_timer_status_get(&timer_task_overload) > 0) {
             for (int j = 0; j < BLOCK_SIZE; j++) {

@@ -70,6 +70,9 @@
         switch7: button_7 {
             gpios = <&gpioe 15 GPIO_ACTIVE_HIGH>;
         };
+        rot_int: button_8 {
+            gpios = <&gpiob 4 GPIO_ACTIVE_HIGH>;
+        };
     };
 
 
@@ -92,6 +95,7 @@
         switch5 = &switch5;
         switch6 = &switch6;
         switch7 = &switch7;
+        rot-int = &rot_int;
     };
 };
 
