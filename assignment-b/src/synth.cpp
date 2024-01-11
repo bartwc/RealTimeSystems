@@ -476,11 +476,11 @@ float Synthesizer::get_sound_sample(Key &key) {
 
     return (float) (sample1 + sample2);
 }
-k_timepoint_t watch_dog;
+K_TIMER_DEFINE(timer_task_overload, NULL, NULL);
 void Synthesizer::makesynth(uint8_t *block) {
-    watch_dog = sys_timepoint_calc(K_MSEC(BLOCK_GEN_PERIOD_MS - 8));
+    k_timer_start(&timer_task_overload, K_MSEC(BLOCK_GEN_PERIOD_MS - 8), K_NO_WAIT);
     for (int i = 0; i < BLOCK_SIZE; i += 2) {
-        if (sys_timepoint_expired(watch_dog)) {
+        if (k_timer_status_get(&timer_task_overload) > 0) {
             for (int j = 0; j < BLOCK_SIZE; j++) {
                 block[j] = 0;
             }
