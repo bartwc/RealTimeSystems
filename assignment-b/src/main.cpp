@@ -141,7 +141,7 @@ int main(void) {
 }
 
 void task_update_peripherals(void *p1, void *p2, void *p3) {
-    k_timer_start(&sync_timer_task1, K_MSEC(50), K_MSEC(50));
+    k_timer_start(&sync_timer_task1, K_MSEC(5), K_MSEC(5));
     while (1) {
         // Check the peripherals input
         set_led(&debug_led0);
