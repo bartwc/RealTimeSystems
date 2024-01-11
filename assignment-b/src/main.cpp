@@ -58,6 +58,11 @@ K_MUTEX_DEFINE(mutex_rotary);
 K_SEM_DEFINE(sem_mem0, 0, 1);
 K_SEM_DEFINE(sem_mem1, 0, 1);
 
+K_TIMER_DEFINE(sync_timer_task1, NULL, NULL);
+K_TIMER_DEFINE(sync_timer_task2, NULL, NULL);
+K_TIMER_DEFINE(sync_timer_task3, NULL, NULL);
+K_TIMER_DEFINE(sync_timer_task4, NULL, NULL);
+
 Synthesizer synth;
 
 void check_keyboard() {
@@ -136,9 +141,8 @@ int main(void) {
 }
 
 void task_update_peripherals(void *p1, void *p2, void *p3) {
-    int64_t time;
+    k_timer_start(&sync_timer_task1, K_MSEC(50), K_MSEC(50));
     while (1) {
-        time = k_uptime_get();
         // Check the peripherals input
         set_led(&debug_led0);
         k_mutex_lock(&mutex_rotary, K_FOREVER);
@@ -146,14 +150,13 @@ void task_update_peripherals(void *p1, void *p2, void *p3) {
         k_mutex_unlock(&mutex_rotary);
         reset_led(&debug_led0);
 
-        k_sleep(K_MSEC(BLOCK_GEN_PERIOD_MS - (k_uptime_get() - time)));
+        k_timer_status_sync(&sync_timer_task1);
     }
 }
 
 void task_check_keyboard(void *p1, void *p2, void *p3) {
-    int64_t time;
+    k_timer_start(&sync_timer_task2, K_MSEC(50), K_MSEC(50));
     while (1) {
-        time = k_uptime_get();
         // Get user input from the keyboard
         set_led(&debug_led1);
         k_mutex_lock(&mutex_keys, K_FOREVER);
@@ -161,15 +164,14 @@ void task_check_keyboard(void *p1, void *p2, void *p3) {
         k_mutex_unlock(&mutex_keys);
         reset_led(&debug_led1);
 
-        k_sleep(K_MSEC(BLOCK_GEN_PERIOD_MS - (k_uptime_get() - time)));
+        k_timer_status_sync(&sync_timer_task2);
     }
 }
 
 void task_make_audio(void *p1, void *p2, void *mem_block) {
-    int64_t time;
+    k_timer_start(&sync_timer_task3, K_MSEC(BLOCK_GEN_PERIOD_MS), K_MSEC(BLOCK_GEN_PERIOD_MS));
     bool is_mem0 = true;
     while (1) {
-        time = k_uptime_get();
         // Make synth sound
         set_led(&debug_led2);
         if (is_mem0) {
@@ -190,14 +192,13 @@ void task_make_audio(void *p1, void *p2, void *mem_block) {
             is_mem0 = true;
         }
         reset_led(&debug_led2);
-        k_sleep(K_MSEC(BLOCK_GEN_PERIOD_MS - (k_uptime_get() - time)));
+        k_timer_status_sync(&sync_timer_task3);
     }
 }
 
 void task_write_audio(void *p1, void *p2, void *mem_block) {
-    int64_t time;
+    k_timer_start(&sync_timer_task4, K_MSEC(50), K_MSEC(50));
     while (1) {
-        time = k_uptime_get();
         set_led(&debug_led3);
         if (k_sem_take(&sem_mem0, K_NO_WAIT) == 0){
             writeBlock(mem_block);
@@ -206,7 +207,7 @@ void task_write_audio(void *p1, void *p2, void *mem_block) {
             writeBlock(((uint8_t *) mem_block) + int (BLOCK_SIZE));
         }
         reset_led(&debug_led3);
-        k_sleep(K_MSEC(BLOCK_GEN_PERIOD_MS - (k_uptime_get() - time)));
+        k_timer_status_sync(&sync_timer_task4);
     }
 }
 
