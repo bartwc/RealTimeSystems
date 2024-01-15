@@ -6,6 +6,8 @@
 #include <math.h>
 #include <stdint.h>
 
+extern struct k_mutex mutex_keys;
+
 void Synthesizer::initialize() {
     // Initial values for oscillator/LPF
     // to avoid setting encoders to uninitialized values
@@ -75,7 +77,7 @@ void Synthesizer::initialize() {
 /**
  * Oscillator and LPF callbacks
 */
-void sel_osc_filter_switch_callback(ThreePosSwitch &sw) {
+void sel_osc_filter_switch_callback(ThreePosSwitch &sw) { // executed in the peripheral thread.
     // Save the previous state
     switch (sw._previous) {
         case Neutral:
@@ -434,7 +436,7 @@ int Synthesizer::get_osc_sample(osc_t osc, uint16_t phase) {
     return sample;
 }
 
-float Synthesizer::get_sound_sample(Key &key) {
+float Synthesizer::get_sound_sample(Key &key) { // executed in the make_audio thread
     int sample1 = 0;
 
     // Obtain sound frequency (including any modulation)
@@ -492,6 +494,7 @@ void Synthesizer::makesynth(uint8_t *block) {
         // get the synthesized sound for every pressed key
         // data race Keys[] in thread task_make_audio(main.cpp)
         for (int j = 0; j < MAX_KEYS; j++) {
+            k_mutex_lock(&mutex_keys, K_FOREVER);
             if (keys[j].state == PRESSED &&
                 !sys_timepoint_expired(keys[j].hold_time)) {
                 sample += get_sound_sample(keys[j]);
@@ -499,6 +502,7 @@ void Synthesizer::makesynth(uint8_t *block) {
                        sys_timepoint_expired(keys[j].hold_time)) {
                 keys[j].state = IDLE;
             }
+            k_mutex_unlock(&mutex_keys);
         }
 
         // Apply LPF

@@ -74,17 +74,20 @@ void check_keyboard() {
         auto key = Key::char_to_key(character);
         bool key_pressed = false;
         for (int i = 0; i < MAX_KEYS; i++) {
+            k_mutex_lock(&mutex_keys, K_FOREVER);
             if (key == keys[i].key && keys[i].state != IDLE) {
                 keys[i].state = PRESSED;
                 keys[i].hold_time = sys_timepoint_calc(K_MSEC(500));
                 keys[i].release_time = sys_timepoint_calc(K_MSEC(500));
                 key_pressed = true;
             }
+            k_mutex_unlock(&mutex_keys);
         }
         // The second loop is necessary to avoid selecting an IDLE key when a
         // PRESSED or RELEASED key is located further away on the array
         if (!key_pressed) {
             for (int i = 0; i < MAX_KEYS; i++) {
+                k_mutex_lock(&mutex_keys, K_FOREVER);
                 if (keys[i].state == IDLE) {
                     keys[i].key = key;
                     keys[i].state = PRESSED;
@@ -92,8 +95,10 @@ void check_keyboard() {
                     keys[i].release_time = sys_timepoint_calc(K_MSEC(500));
                     keys[i].phase1 = 0;
                     keys[i].phase2 = 0;
+                    k_mutex_unlock(&mutex_keys);
                     break;
                 }
+                k_mutex_unlock(&mutex_keys);
             }
         }
     }
