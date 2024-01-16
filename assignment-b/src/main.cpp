@@ -169,9 +169,9 @@ void task_check_keyboard(void *p1, void *p2, void *p3) {
     while (1) {
         // Get user input from the keyboard
         set_led(&debug_led1);
-        //k_mutex_lock(&mutex_keys, K_FOREVER);
+
         check_keyboard();
-        //k_mutex_unlock(&mutex_keys);
+
         reset_led(&debug_led1);
 
         k_timer_status_sync(&sync_timer_task2);
@@ -185,19 +185,11 @@ void task_make_audio(void *p1, void *p2, void *mem_block) {
         // Make synth sound
         set_led(&debug_led2);
         if (is_mem0) {
-            k_mutex_lock(&mutex_keys, K_FOREVER);
-            k_mutex_lock(&mutex_rotary, K_FOREVER);
             synth.makesynth((uint8_t *) mem_block);
-            k_mutex_unlock(&mutex_rotary);
-            k_mutex_unlock(&mutex_keys);
             k_sem_give(&sem_mem0);
             is_mem0 = false;
         } else {
-            k_mutex_lock(&mutex_keys, K_FOREVER);
-            k_mutex_lock(&mutex_rotary, K_FOREVER);
             synth.makesynth(((uint8_t *) mem_block) + int (BLOCK_SIZE));
-            k_mutex_unlock(&mutex_rotary);
-            k_mutex_unlock(&mutex_keys);
             k_sem_give(&sem_mem1);
             is_mem0 = true;
         }
