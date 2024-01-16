@@ -36,6 +36,7 @@ const struct gpio_dt_spec sw2_dn = GPIO_DT_SPEC_GET(DT_ALIAS(switch6), gpios);
 const struct gpio_dt_spec sw2_up = GPIO_DT_SPEC_GET(DT_ALIAS(switch7), gpios);
 const struct gpio_dt_spec sw3_dn = GPIO_DT_SPEC_GET(DT_ALIAS(switch2), gpios);
 const struct gpio_dt_spec sw3_up = GPIO_DT_SPEC_GET(DT_ALIAS(switch3), gpios);
+const struct gpio_dt_spec rot_int = GPIO_DT_SPEC_GET(DT_ALIAS(rot_int), gpios);
 
 // Switches
 ThreePosSwitch switches[N_SWITCHES];
@@ -141,7 +142,7 @@ int peripherals_update() {
 
     // Update the switches
     for (int i = 0; i < N_SWITCHES; i++) {
-        //data race to be investigated
+        //data race switches[] in thread task_update_peripherals (main.cpp)
         switches[i].update();
     }
 
@@ -157,7 +158,7 @@ int peripherals_update() {
         uint8_t pin1 = (ports[port] >> index1) & 0x01;
 
         // Initialize the encoder
-        // data race to be investigated
+        // data race encoders[] in thread task_update_peripherals (main.cpp)
         encoders[i].update(pin0, pin1);
     }
 

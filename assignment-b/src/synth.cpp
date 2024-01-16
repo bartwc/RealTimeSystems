@@ -6,6 +6,9 @@
 #include <math.h>
 #include <stdint.h>
 
+extern struct k_mutex mutex_keys;
+extern struct k_mutex mutex_peripherals;
+
 void Synthesizer::initialize() {
     // Initial values for oscillator/LPF
     // to avoid setting encoders to uninitialized values
@@ -75,7 +78,7 @@ void Synthesizer::initialize() {
 /**
  * Oscillator and LPF callbacks
 */
-void sel_osc_filter_switch_callback(ThreePosSwitch &sw) {
+void sel_osc_filter_switch_callback(ThreePosSwitch &sw) { // executed in the peripheral thread.
     // Save the previous state
     switch (sw._previous) {
         case Neutral:
@@ -434,7 +437,7 @@ int Synthesizer::get_osc_sample(osc_t osc, uint16_t phase) {
     return sample;
 }
 
-float Synthesizer::get_sound_sample(Key &key) {
+float Synthesizer::get_sound_sample(Key &key) { // executed in the make_audio thread
     int sample1 = 0;
 
     // Obtain sound frequency (including any modulation)
@@ -476,11 +479,13 @@ float Synthesizer::get_sound_sample(Key &key) {
 
     return (float) (sample1 + sample2);
 }
-k_timepoint_t watch_dog;
+K_TIMER_DEFINE(timer_task_overload, NULL, NULL);
 void Synthesizer::makesynth(uint8_t *block) {
-    watch_dog = sys_timepoint_calc(K_MSEC(BLOCK_GEN_PERIOD_MS - 8));
+    k_timer_start(&timer_task_overload, K_MSEC(BLOCK_GEN_PERIOD_MS - 5), K_NO_WAIT);
+    k_mutex_lock(&mutex_keys, K_FOREVER);
     for (int i = 0; i < BLOCK_SIZE; i += 2) {
-        if (sys_timepoint_expired(watch_dog)) {
+        if (k_timer_status_get(&timer_task_overload) > 0) {
+            k_mutex_unlock(&mutex_keys);
             for (int j = 0; j < BLOCK_SIZE; j++) {
                 block[j] = 0;
             }
@@ -490,7 +495,10 @@ void Synthesizer::makesynth(uint8_t *block) {
         float sample = 0;
 
         // get the synthesized sound for every pressed key
+        // data race Keys[] in thread task_make_audio(main.cpp)
+        k_mutex_lock(&mutex_peripherals, K_FOREVER);
         for (int j = 0; j < MAX_KEYS; j++) {
+
             if (keys[j].state == PRESSED &&
                 !sys_timepoint_expired(keys[j].hold_time)) {
                 sample += get_sound_sample(keys[j]);
@@ -498,12 +506,14 @@ void Synthesizer::makesynth(uint8_t *block) {
                        sys_timepoint_expired(keys[j].hold_time)) {
                 keys[j].state = IDLE;
             }
+
         }
 
         // Apply LPF
         if (synth._lpf._cutoff_freq > 0.) {
             sample = synth._lpf.filter(sample);
         }
+        k_mutex_unlock(&mutex_peripherals);
 
         // clamp the value
         if (sample > 0x7fff)
@@ -514,5 +524,6 @@ void Synthesizer::makesynth(uint8_t *block) {
         block[i] = (int16_t) sample & 0xFF;
         block[i + 1] = (int16_t) sample >> 8;
     }
+    k_mutex_unlock(&mutex_keys);
     reset_led(&status_led3);
 }

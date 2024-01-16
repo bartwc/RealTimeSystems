@@ -60,7 +60,7 @@ public:
   float elapsed_release;
 };
 
-// data race to be investigated
+// data race keys[] declared
 extern Key keys[MAX_KEYS];
 
 #endif // __KEY_H__
