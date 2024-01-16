@@ -55,7 +55,7 @@ void switch_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t
 void attach_interrupt_switch(void);
 
 K_MUTEX_DEFINE(mutex_keys);
-K_MUTEX_DEFINE(mutex_rotary);
+K_MUTEX_DEFINE(mutex_peripherals);
 K_SEM_DEFINE(sem_mem0, 0, 1);
 K_SEM_DEFINE(sem_mem1, 0, 1);
 K_SEM_DEFINE(sem_peripherals, 0, 1);
@@ -73,21 +73,21 @@ void check_keyboard() {
     while (usbRead(&character, 1)) {
         auto key = Key::char_to_key(character);
         bool key_pressed = false;
+        k_mutex_lock(&mutex_keys, K_FOREVER);
         for (int i = 0; i < MAX_KEYS; i++) {
-            k_mutex_lock(&mutex_keys, K_FOREVER);
+
             if (key == keys[i].key && keys[i].state != IDLE) {
                 keys[i].state = PRESSED;
                 keys[i].hold_time = sys_timepoint_calc(K_MSEC(500));
                 keys[i].release_time = sys_timepoint_calc(K_MSEC(500));
                 key_pressed = true;
             }
-            k_mutex_unlock(&mutex_keys);
         }
         // The second loop is necessary to avoid selecting an IDLE key when a
         // PRESSED or RELEASED key is located further away on the array
         if (!key_pressed) {
             for (int i = 0; i < MAX_KEYS; i++) {
-                k_mutex_lock(&mutex_keys, K_FOREVER);
+
                 if (keys[i].state == IDLE) {
                     keys[i].key = key;
                     keys[i].state = PRESSED;
@@ -95,12 +95,11 @@ void check_keyboard() {
                     keys[i].release_time = sys_timepoint_calc(K_MSEC(500));
                     keys[i].phase1 = 0;
                     keys[i].phase2 = 0;
-                    k_mutex_unlock(&mutex_keys);
                     break;
                 }
-                k_mutex_unlock(&mutex_keys);
             }
         }
+        k_mutex_unlock(&mutex_keys);
     }
 }
 
@@ -153,9 +152,9 @@ void task_update_peripherals(void *p1, void *p2, void *p3) {
         // Check the peripherals input
         if (k_sem_take(&sem_peripherals, K_FOREVER) == 0) {
             set_led(&debug_led0);
-            //k_mutex_lock(&mutex_rotary, K_FOREVER);
+            k_mutex_lock(&mutex_peripherals, K_FOREVER);
             peripherals_update();
-            //k_mutex_unlock(&mutex_rotary);
+            k_mutex_unlock(&mutex_peripherals);
             reset_led(&debug_led0);
         }
 
