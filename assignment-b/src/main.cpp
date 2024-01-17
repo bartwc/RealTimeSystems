@@ -56,8 +56,8 @@ void attach_interrupt_switch(void);
 
 K_MUTEX_DEFINE(mutex_keys);
 K_MUTEX_DEFINE(mutex_peripherals);
-K_SEM_DEFINE(sem_mem0, 0, 1);
-K_SEM_DEFINE(sem_mem1, 0, 1);
+K_MUTEX_DEFINE(mutex_mem0);
+K_MUTEX_DEFINE(mutex_mem1);
 K_SEM_DEFINE(sem_peripherals, 0, 1);
 
 K_TIMER_DEFINE(sync_timer_task1, NULL, NULL);
@@ -125,7 +125,7 @@ int main(void) {
                                        K_THREAD_STACK_SIZEOF(stack0),
                                        task_update_peripherals,
                                        NULL, NULL, NULL,
-                                       -1, 0, K_NO_WAIT);
+                                       1, 0, K_NO_WAIT);
     k_tid_t my_tid_1 = k_thread_create(&my_thread_data_1, stack1,
                                        K_THREAD_STACK_SIZEOF(stack1),
                                        task_check_keyboard,
@@ -184,12 +184,14 @@ void task_make_audio(void *p1, void *p2, void *mem_block) {
         // Make synth sound
         set_led(&debug_led2);
         if (is_mem0) {
+            k_mutex_lock(&mutex_mem0, K_FOREVER);
             synth.makesynth((uint8_t *) mem_block);
-            k_sem_give(&sem_mem0);
+            k_mutex_unlock(&mutex_mem0);
             is_mem0 = false;
         } else {
+            k_mutex_lock(&mutex_mem1, K_FOREVER);
             synth.makesynth(((uint8_t *) mem_block) + int (BLOCK_SIZE));
-            k_sem_give(&sem_mem1);
+            k_mutex_unlock(&mutex_mem1);
             is_mem0 = true;
         }
         reset_led(&debug_led2);
@@ -198,20 +200,25 @@ void task_make_audio(void *p1, void *p2, void *mem_block) {
 }
 
 void task_write_audio(void *p1, void *p2, void *mem_block) {
-    k_timer_start(&sync_timer_task4, K_MSEC(50), K_MSEC(50));
+    k_timer_start(&sync_timer_task4, K_MSEC(BLOCK_GEN_PERIOD_MS), K_MSEC(BLOCK_GEN_PERIOD_MS));
+    bool is_mem0 = false;
     while (1) {
         set_led(&debug_led3);
-        if (k_sem_take(&sem_mem0, K_NO_WAIT) == 0){
+        if (is_mem0) {
+            k_mutex_lock(&mutex_mem0, K_FOREVER);
             writeBlock(mem_block);
-        }
-        if (k_sem_take(&sem_mem1, K_NO_WAIT) == 0) {
-            writeBlock(((uint8_t *) mem_block) + int (BLOCK_SIZE));
+            k_mutex_unlock(&mutex_mem0);
+            is_mem0 = false;
+        } else {
+            k_mutex_lock(&mutex_mem1, K_FOREVER);
+            writeBlock(((uint8_t *) mem_block) + int(BLOCK_SIZE));
+            k_mutex_unlock(&mutex_mem1);
+            is_mem0 = true;
         }
         reset_led(&debug_led3);
         k_timer_status_sync(&sync_timer_task4);
     }
 }
-
 void attach_interrupt_switch(void) {
     int ret0 = gpio_pin_interrupt_configure_dt(&sw_osc_dn, GPIO_INT_EDGE_BOTH);
     int ret1 = gpio_pin_interrupt_configure_dt(&sw_osc_up, GPIO_INT_EDGE_BOTH);
