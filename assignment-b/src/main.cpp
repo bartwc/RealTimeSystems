@@ -130,7 +130,7 @@ int main(void) {
                                        K_THREAD_STACK_SIZEOF(stack1),
                                        task_check_keyboard,
                                        NULL, NULL, NULL,
-                                       2, 0, K_NO_WAIT);
+                                       4, 0, K_NO_WAIT);
     k_tid_t my_tid_2 = k_thread_create(&my_thread_data_2, stack2,
                                        K_THREAD_STACK_SIZEOF(stack2),
                                        task_make_audio,
@@ -140,25 +140,25 @@ int main(void) {
                                        K_THREAD_STACK_SIZEOF(stack3),
                                        task_write_audio,
                                        NULL, NULL, mem_block,
-                                       4, 0, K_NO_WAIT);
-    attach_interrupt_switch();
+                                       2, 0, K_NO_WAIT);
+    //attach_interrupt_switch();
     k_thread_suspend(k_current_get());
     return 0;
 }
 
 void task_update_peripherals(void *p1, void *p2, void *p3) {
-    k_timer_start(&sync_timer_task1, K_MSEC(5), K_MSEC(5));
+    k_timer_start(&sync_timer_task1, K_MSEC(8), K_MSEC(8));
     while (1) {
         // Check the peripherals input
-        if (k_sem_take(&sem_peripherals, K_FOREVER) == 0) {
+        //if (k_sem_take(&sem_peripherals, K_FOREVER) == 0) {
             set_led(&debug_led0);
             //software debouncing
-            k_usleep(200);
+            //k_usleep(200);
             k_mutex_lock(&mutex_peripherals, K_FOREVER);
             peripherals_update();
             k_mutex_unlock(&mutex_peripherals);
             reset_led(&debug_led0);
-        }
+        //}
 
 
         k_timer_status_sync(&sync_timer_task1);
@@ -166,7 +166,7 @@ void task_update_peripherals(void *p1, void *p2, void *p3) {
 }
 
 void task_check_keyboard(void *p1, void *p2, void *p3) {
-    k_timer_start(&sync_timer_task2, K_MSEC(50), K_MSEC(50));
+    k_timer_start(&sync_timer_task2, K_MSEC(80), K_MSEC(80));
     while (1) {
         // Get user input from the keyboard
         set_led(&debug_led1);
