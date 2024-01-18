@@ -152,6 +152,8 @@ void task_update_peripherals(void *p1, void *p2, void *p3) {
         // Check the peripherals input
         if (k_sem_take(&sem_peripherals, K_FOREVER) == 0) {
             set_led(&debug_led0);
+            //software debouncing
+            k_usleep(200);
             k_mutex_lock(&mutex_peripherals, K_FOREVER);
             peripherals_update();
             k_mutex_unlock(&mutex_peripherals);
