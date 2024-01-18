@@ -26,6 +26,11 @@ void task_write_audio(void *, void *, void *);
 
 void task_make_audio(void *, void *, void *);
 
+void work_update_switch0(void *, void *, void *);
+void work_update_switch1(void *p1, void *p2, void *p3);
+void work_update_switch2(void *p1, void *p2, void *p3);
+void work_update_switch3(void *p1, void *p2, void *p3);
+
 K_THREAD_STACK_DEFINE(stack0,
 STACK_SIZE);
 K_THREAD_STACK_DEFINE(stack1,
@@ -35,11 +40,25 @@ STACK_SIZE);
 K_THREAD_STACK_DEFINE(stack3,
 STACK_SIZE);
 
+K_THREAD_STACK_DEFINE(stack4,
+STACK_SIZE);
+K_THREAD_STACK_DEFINE(stack5,
+STACK_SIZE);
+K_THREAD_STACK_DEFINE(stack6,
+STACK_SIZE);
+K_THREAD_STACK_DEFINE(stack7,
+STACK_SIZE);
+
+
 struct k_thread my_thread_data_0;
 struct k_thread my_thread_data_1;
 struct k_thread my_thread_data_2;
 struct k_thread my_thread_data_3;
 
+struct k_thread sw0_thread_data_0;
+struct k_thread sw1_thread_data_1;
+struct k_thread sw2_thread_data_2;
+struct k_thread sw3_thread_data_3;
 
 
 static struct gpio_callback sw0_cb;
@@ -52,6 +71,10 @@ static struct gpio_callback sw6_cb;
 static struct gpio_callback sw7_cb;
 static struct gpio_callback rot_cb;
 void switch_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins);
+void switch0_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins);
+void switch1_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins);
+void switch2_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins);
+void switch3_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins);
 void attach_interrupt_switch(void);
 
 K_MUTEX_DEFINE(mutex_keys);
@@ -59,6 +82,11 @@ K_MUTEX_DEFINE(mutex_peripherals);
 K_MUTEX_DEFINE(mutex_mem0);
 K_MUTEX_DEFINE(mutex_mem1);
 K_SEM_DEFINE(sem_peripherals, 0, 1);
+
+K_SEM_DEFINE(sem_sw0, 0, 1);
+K_SEM_DEFINE(sem_sw1, 0, 1);
+K_SEM_DEFINE(sem_sw2, 0, 1);
+K_SEM_DEFINE(sem_sw3, 0, 1);
 
 K_TIMER_DEFINE(sync_timer_task1, NULL, NULL);
 K_TIMER_DEFINE(sync_timer_task2, NULL, NULL);
@@ -125,7 +153,7 @@ int main(void) {
                                        K_THREAD_STACK_SIZEOF(stack0),
                                        task_update_peripherals,
                                        NULL, NULL, NULL,
-                                       1, 0, K_NO_WAIT);
+                                       -1, 0, K_NO_WAIT);
     k_tid_t my_tid_1 = k_thread_create(&my_thread_data_1, stack1,
                                        K_THREAD_STACK_SIZEOF(stack1),
                                        task_check_keyboard,
@@ -141,27 +169,48 @@ int main(void) {
                                        task_write_audio,
                                        NULL, NULL, mem_block,
                                        3, 0, K_NO_WAIT);
-    //attach_interrupt_switch();
+
+    k_tid_t work_tid_0 = k_thread_create(&sw0_thread_data_0, stack4,
+                                       K_THREAD_STACK_SIZEOF(stack4),
+                                         work_update_switch0,
+                                       NULL, NULL, NULL,
+                                       -1, 0, K_NO_WAIT);
+    k_tid_t work_tid_1 = k_thread_create(&sw1_thread_data_1, stack5,
+                                       K_THREAD_STACK_SIZEOF(stack5),
+                                         work_update_switch1,
+                                       NULL, NULL, NULL,
+                                       -1, 0, K_NO_WAIT);
+    k_tid_t work_tid_2 = k_thread_create(&sw2_thread_data_2, stack6,
+                                       K_THREAD_STACK_SIZEOF(stack6),
+                                         work_update_switch2,
+                                       NULL, NULL, NULL,
+                                       -1, 0, K_NO_WAIT);
+    k_tid_t work_tid_3 = k_thread_create(&sw3_thread_data_3, stack7,
+                                       K_THREAD_STACK_SIZEOF(stack7),
+                                         work_update_switch3,
+                                       NULL, NULL, NULL,
+                                       -1, 0, K_NO_WAIT);
+    attach_interrupt_switch();
     k_thread_suspend(k_current_get());
     return 0;
 }
 
 void task_update_peripherals(void *p1, void *p2, void *p3) {
-    k_timer_start(&sync_timer_task1, K_MSEC(8), K_MSEC(8));
+    //k_timer_start(&sync_timer_task1, K_MSEC(8), K_MSEC(8));
     while (1) {
         // Check the peripherals input
-        //if (k_sem_take(&sem_peripherals, K_FOREVER) == 0) {
+        if (k_sem_take(&sem_peripherals, K_FOREVER) == 0) {
             set_led(&debug_led0);
             //software debouncing
-            //k_usleep(200);
+            k_usleep(200);
             k_mutex_lock(&mutex_peripherals, K_FOREVER);
             peripherals_update();
             k_mutex_unlock(&mutex_peripherals);
             reset_led(&debug_led0);
-        //}
+        }
 
 
-        k_timer_status_sync(&sync_timer_task1);
+        //k_timer_status_sync(&sync_timer_task1);
     }
 }
 
@@ -242,14 +291,14 @@ void attach_interrupt_switch(void) {
     }
 
     // initialize callback structure for button interrupt
-    gpio_init_callback(&sw0_cb, switch_pressed, BIT(sw_osc_dn.pin));
-    gpio_init_callback(&sw1_cb, switch_pressed, BIT(sw_osc_up.pin));
-    gpio_init_callback(&sw2_cb, switch_pressed, BIT(sw1_up.pin));
-    gpio_init_callback(&sw3_cb, switch_pressed, BIT(sw2_up.pin));
-    gpio_init_callback(&sw4_cb, switch_pressed, BIT(sw3_up.pin));
-    gpio_init_callback(&sw5_cb, switch_pressed, BIT(sw1_dn.pin));
-    gpio_init_callback(&sw6_cb, switch_pressed, BIT(sw2_dn.pin));
-    gpio_init_callback(&sw7_cb, switch_pressed, BIT(sw3_dn.pin));
+    gpio_init_callback(&sw0_cb, switch0_pressed, BIT(sw_osc_dn.pin));
+    gpio_init_callback(&sw1_cb, switch0_pressed, BIT(sw_osc_up.pin));
+    gpio_init_callback(&sw2_cb, switch1_pressed, BIT(sw1_up.pin));
+    gpio_init_callback(&sw3_cb, switch2_pressed, BIT(sw2_up.pin));
+    gpio_init_callback(&sw4_cb, switch3_pressed, BIT(sw3_up.pin));
+    gpio_init_callback(&sw5_cb, switch1_pressed, BIT(sw1_dn.pin));
+    gpio_init_callback(&sw6_cb, switch2_pressed, BIT(sw2_dn.pin));
+    gpio_init_callback(&sw7_cb, switch3_pressed, BIT(sw3_dn.pin));
     gpio_init_callback(&rot_cb, switch_pressed, BIT(rot_int.pin));
 
     // attach callback function to button interrupt
@@ -264,8 +313,83 @@ void attach_interrupt_switch(void) {
     gpio_add_callback(rot_int.port, &rot_cb);
 }
 
+void work_update_switch0(void *p1, void *p2, void *p3) {
+    while (1) {
+        if (k_sem_take(&sem_sw0, K_FOREVER) == 0) {
+            set_led(&debug_led0);
+            //software debouncing
+            k_usleep(200);
+            k_mutex_lock(&mutex_peripherals, K_FOREVER);
+            switches[0].update();
+            k_mutex_unlock(&mutex_peripherals);
+            reset_led(&debug_led0);
+        }
+    }
+}
+
+void work_update_switch1(void *p1, void *p2, void *p3) {
+    while (1) {
+        if (k_sem_take(&sem_sw1, K_FOREVER) == 0) {
+            set_led(&debug_led0);
+            //software debouncing
+            k_usleep(200);
+            k_mutex_lock(&mutex_peripherals, K_FOREVER);
+            switches[1].update();
+            k_mutex_unlock(&mutex_peripherals);
+            reset_led(&debug_led0);
+        }
+    }
+}
+
+void work_update_switch2(void *p1, void *p2, void *p3) {
+    while (1) {
+        if (k_sem_take(&sem_sw2, K_FOREVER) == 0) {
+            set_led(&debug_led0);
+            //software debouncing
+            k_usleep(200);
+            k_mutex_lock(&mutex_peripherals, K_FOREVER);
+            switches[2].update();
+            k_mutex_unlock(&mutex_peripherals);
+            reset_led(&debug_led0);
+        }
+    }
+}
+
+void work_update_switch3(void *p1, void *p2, void *p3) {
+    while (1) {
+        if (k_sem_take(&sem_sw3, K_FOREVER) == 0) {
+            set_led(&debug_led0);
+            //software debouncing
+            k_usleep(200);
+            k_mutex_lock(&mutex_peripherals, K_FOREVER);
+            switches[3].update();
+            k_mutex_unlock(&mutex_peripherals);
+            reset_led(&debug_led0);
+        }
+    }
+}
 void switch_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
     k_sem_give(&sem_peripherals);
+    return;
+}
+void switch0_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
+{
+    k_sem_give(&sem_sw0);
+    return;
+}
+void switch1_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
+{
+    k_sem_give(&sem_sw1);
+    return;
+}
+void switch2_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
+{
+    k_sem_give(&sem_sw2);
+    return;
+}
+void switch3_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
+{
+    k_sem_give(&sem_sw3);
     return;
 }
