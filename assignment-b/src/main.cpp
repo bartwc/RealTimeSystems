@@ -130,17 +130,17 @@ int main(void) {
                                        K_THREAD_STACK_SIZEOF(stack1),
                                        task_check_keyboard,
                                        NULL, NULL, NULL,
-                                       4, 0, K_NO_WAIT);
+                                       2, 0, K_NO_WAIT);
     k_tid_t my_tid_2 = k_thread_create(&my_thread_data_2, stack2,
                                        K_THREAD_STACK_SIZEOF(stack2),
                                        task_make_audio,
                                        NULL, NULL, mem_block,
-                                       3, 0, K_NO_WAIT);
+                                       4, 0, K_NO_WAIT);
     k_tid_t my_tid_3 = k_thread_create(&my_thread_data_3, stack3,
                                        K_THREAD_STACK_SIZEOF(stack3),
                                        task_write_audio,
                                        NULL, NULL, mem_block,
-                                       2, 0, K_NO_WAIT);
+                                       3, 0, K_NO_WAIT);
     //attach_interrupt_switch();
     k_thread_suspend(k_current_get());
     return 0;
@@ -179,22 +179,29 @@ void task_check_keyboard(void *p1, void *p2, void *p3) {
     }
 }
 
+atomic_t write_mem0 = ATOMIC_INIT(1);
 void task_make_audio(void *p1, void *p2, void *mem_block) {
     k_timer_start(&sync_timer_task3, K_MSEC(BLOCK_GEN_PERIOD_MS), K_MSEC(BLOCK_GEN_PERIOD_MS));
-    bool is_mem0 = true;
+    //bool is_mem0 = true;
+    bool is_first = true;
     while (1) {
         // Make synth sound
         set_led(&debug_led2);
-        if (is_mem0) {
+        if (atomic_get(&write_mem0) == 1) {
+            if(is_first){
+                is_first = false;
+            }
+            else{
+                k_mutex_unlock(&mutex_mem1);
+            }
             k_mutex_lock(&mutex_mem0, K_FOREVER);
             synth.makesynth((uint8_t *) mem_block);
-            k_mutex_unlock(&mutex_mem0);
-            is_mem0 = false;
+            atomic_set(&write_mem0, 0);
         } else {
+            k_mutex_unlock(&mutex_mem0);
             k_mutex_lock(&mutex_mem1, K_FOREVER);
             synth.makesynth(((uint8_t *) mem_block) + int (BLOCK_SIZE));
-            k_mutex_unlock(&mutex_mem1);
-            is_mem0 = true;
+            atomic_set(&write_mem0, 1);
         }
         reset_led(&debug_led2);
         k_timer_status_sync(&sync_timer_task3);
@@ -202,20 +209,17 @@ void task_make_audio(void *p1, void *p2, void *mem_block) {
 }
 
 void task_write_audio(void *p1, void *p2, void *mem_block) {
-    k_timer_start(&sync_timer_task4, K_MSEC(BLOCK_GEN_PERIOD_MS), K_MSEC(BLOCK_GEN_PERIOD_MS));
-    bool is_mem0 = false;
+    k_timer_start(&sync_timer_task4, K_MSEC(BLOCK_GEN_PERIOD_MS - 1), K_MSEC(BLOCK_GEN_PERIOD_MS - 1));
     while (1) {
         set_led(&debug_led3);
-        if (is_mem0) {
+        if(atomic_get(&write_mem0) == 0){
             k_mutex_lock(&mutex_mem0, K_FOREVER);
             writeBlock(mem_block);
             k_mutex_unlock(&mutex_mem0);
-            is_mem0 = false;
         } else {
             k_mutex_lock(&mutex_mem1, K_FOREVER);
             writeBlock(((uint8_t *) mem_block) + int(BLOCK_SIZE));
             k_mutex_unlock(&mutex_mem1);
-            is_mem0 = true;
         }
         reset_led(&debug_led3);
         k_timer_status_sync(&sync_timer_task4);
