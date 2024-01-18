@@ -209,7 +209,7 @@ void task_make_audio(void *p1, void *p2, void *mem_block) {
 }
 
 void task_write_audio(void *p1, void *p2, void *mem_block) {
-    k_timer_start(&sync_timer_task4, K_MSEC(BLOCK_GEN_PERIOD_MS - 1), K_MSEC(BLOCK_GEN_PERIOD_MS - 1));
+    k_timer_start(&sync_timer_task4, K_MSEC(BLOCK_GEN_PERIOD_MS), K_MSEC(BLOCK_GEN_PERIOD_MS));
     while (1) {
         set_led(&debug_led3);
         if(atomic_get(&write_mem0) == 0){
