@@ -487,7 +487,7 @@ void Synthesizer::makesynth(uint8_t *block) {
     for (int i = 0; i < BLOCK_SIZE; i += 2) {
         if (k_timer_status_get(&timer_task_overload) > 0) {
             k_mutex_unlock(&mutex_keys);
-            memset(block, 0, BLOCK_SIZE);
+            memset(block + i, 0, BLOCK_SIZE - i);
             set_led(&status_led3);
             return;
         }

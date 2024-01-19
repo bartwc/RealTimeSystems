@@ -163,12 +163,12 @@ int main(void) {
                                        K_THREAD_STACK_SIZEOF(stack2),
                                        task_make_audio,
                                        NULL, NULL, mem_block,
-                                       4, 0, K_NO_WAIT);
+                                       3, 0, K_NO_WAIT);
     k_tid_t my_tid_3 = k_thread_create(&my_thread_data_3, stack3,
                                        K_THREAD_STACK_SIZEOF(stack3),
                                        task_write_audio,
                                        NULL, NULL, mem_block,
-                                       3, 0, K_NO_WAIT);
+                                       4, 0, K_NO_WAIT);
 
     k_tid_t work_tid_0 = k_thread_create(&sw0_thread_data_0, stack4,
                                        K_THREAD_STACK_SIZEOF(stack4),
