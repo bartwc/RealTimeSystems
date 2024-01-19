@@ -318,7 +318,7 @@ void work_update_switch0(void *p1, void *p2, void *p3) {
         if (k_sem_take(&sem_sw0, K_FOREVER) == 0) {
             set_led(&debug_led0);
             //software debouncing
-            k_usleep(200);
+            //k_usleep(200);
             k_mutex_lock(&mutex_peripherals, K_FOREVER);
             switches[0].update();
             k_mutex_unlock(&mutex_peripherals);
@@ -332,7 +332,7 @@ void work_update_switch1(void *p1, void *p2, void *p3) {
         if (k_sem_take(&sem_sw1, K_FOREVER) == 0) {
             set_led(&debug_led0);
             //software debouncing
-            k_usleep(200);
+            //k_usleep(200);
             k_mutex_lock(&mutex_peripherals, K_FOREVER);
             switches[1].update();
             k_mutex_unlock(&mutex_peripherals);
@@ -346,7 +346,7 @@ void work_update_switch2(void *p1, void *p2, void *p3) {
         if (k_sem_take(&sem_sw2, K_FOREVER) == 0) {
             set_led(&debug_led0);
             //software debouncing
-            k_usleep(200);
+            //k_usleep(200);
             k_mutex_lock(&mutex_peripherals, K_FOREVER);
             switches[2].update();
             k_mutex_unlock(&mutex_peripherals);
@@ -360,7 +360,7 @@ void work_update_switch3(void *p1, void *p2, void *p3) {
         if (k_sem_take(&sem_sw3, K_FOREVER) == 0) {
             set_led(&debug_led0);
             //software debouncing
-            k_usleep(200);
+            //k_usleep(200);
             k_mutex_lock(&mutex_peripherals, K_FOREVER);
             switches[3].update();
             k_mutex_unlock(&mutex_peripherals);

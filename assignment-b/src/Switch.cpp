@@ -2,6 +2,7 @@
 #include "usb.h"
 
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/kernel.h>
 
 bool get_button(const struct gpio_dt_spec *button) {
     return gpio_pin_get_dt(button);
@@ -34,8 +35,23 @@ int ThreePosSwitch::initialize(const struct gpio_dt_spec *up,
 
 void ThreePosSwitch::update() {
     // Get the new state
-    bool up = gpio_pin_get_dt(_up);
-    bool dn = gpio_pin_get_dt(_down);
+    bool temp_up = gpio_pin_get_dt(_up);
+    bool temp_dn = gpio_pin_get_dt(_down);
+    int num_check = 0;
+    // software debouncing
+    while(num_check <= 9){
+        if(temp_up == gpio_pin_get_dt(_up) && temp_dn == gpio_pin_get_dt(_down)){
+            num_check = num_check + 1;
+            k_usleep(20);
+        } else {
+            temp_up = gpio_pin_get_dt(_up);
+            temp_dn = gpio_pin_get_dt(_down);
+            num_check = 0;
+        }
+    }
+    bool up = temp_up;
+    bool dn = temp_dn;
+
     if (up == dn) {
         _current_state = Neutral;
     } else if (up) {
