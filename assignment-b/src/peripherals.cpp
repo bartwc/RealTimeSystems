@@ -141,10 +141,10 @@ int peripherals_update() {
     }
 
     // Update the switches
-    for (int i = 0; i < N_SWITCHES; i++) {
-        //data race switches[] in thread task_update_peripherals (main.cpp)
-        switches[i].update();
-    }
+//    for (int i = 0; i < N_SWITCHES; i++) {
+//        //data race switches[] in thread task_update_peripherals (main.cpp)
+//        switches[i].update();
+//    }
 
     // Update the rotary encoders
     for (int i = 0; i < N_ENCODERS; i++) {
